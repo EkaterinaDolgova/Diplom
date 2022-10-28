@@ -5,6 +5,10 @@ import javax.persistence.*;
 @Entity
 /**Класс Объявление*/
 public class Ads {
+    public enum authenticated {
+        TRUE,
+        FALSE
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
