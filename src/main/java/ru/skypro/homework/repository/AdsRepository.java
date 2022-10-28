@@ -7,5 +7,8 @@ public interface AdsRepository extends JpaRepository <Ads, Long> {
     default String getAllAds() {
         return null;
     }
+    default String addAds() {
+        return null;
+    }
 
 }
