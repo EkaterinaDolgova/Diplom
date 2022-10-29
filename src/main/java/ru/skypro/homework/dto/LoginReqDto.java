@@ -1,6 +1,7 @@
 package ru.skypro.homework.dto;
 
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 @Data
 public class LoginReqDto {
