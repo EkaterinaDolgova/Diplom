@@ -1,25 +1,25 @@
 package ru.skypro.homework.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.skypro.homework.dto.NewPassword;
-import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.dto.NewPasswordDto;
+import ru.skypro.homework.dto.ResponseWrapperUserDto;
+import ru.skypro.homework.dto.UserDto;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<UserDto, Long> {
 
-    default ResponseWrapperUser getUsers() {
+    default ResponseWrapperUserDto getUsers() {
         return null;
     }
 
-    default User getUser(Integer id) {
+    default UserDto getUser(Integer id) {
         return null;
     }
 
-    default NewPassword setPassword() {
+    default NewPasswordDto setPassword() {
         return null;
     }
 
-    default User updateUser() {
+    default UserDto updateUser() {
         return null;
     }
 }

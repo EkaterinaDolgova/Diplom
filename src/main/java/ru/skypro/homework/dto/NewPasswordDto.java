@@ -1,10 +1,10 @@
 package ru.skypro.homework.dto;
 
-public class NewPassword {
+public class NewPasswordDto {
     private String currentPassword;
     private String newPassword;
 
-    public NewPassword(String currentPassword, String newPassword) {
+    public NewPasswordDto(String currentPassword, String newPassword) {
         this.currentPassword = currentPassword;
         this.newPassword = newPassword;
     }

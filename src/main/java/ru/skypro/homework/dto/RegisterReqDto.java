@@ -3,7 +3,7 @@ package ru.skypro.homework.dto;
 import lombok.Data;
 
 @Data
-public class RegisterReq {
+public class RegisterReqDto {
     private String username;
     private String password;
     private String firstName;
@@ -11,7 +11,7 @@ public class RegisterReq {
     private String phone;
     private Role role;
 
-    public RegisterReq(String password, String firstName, String lastName, String phone, Role role) {
+    public RegisterReqDto(String password, String firstName, String lastName, String phone, Role role) {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -68,7 +68,7 @@ public class RegisterReq {
     }
     @Override
     public String toString() {
-        return "RegisterReq{" +
+        return "RegisterReqDto{" +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +

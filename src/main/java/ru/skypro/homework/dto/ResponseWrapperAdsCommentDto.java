@@ -2,11 +2,11 @@ package ru.skypro.homework.dto;
 
 import java.util.List;
 
-public class ResponseWrapperAdsComment {
+public class ResponseWrapperAdsCommentDto {
     private Integer count;
-    private List<AdsComment> results;
+    private List<AdsCommentDto> results;
 
-    public ResponseWrapperAdsComment(Integer count, List<AdsComment> results) {
+    public ResponseWrapperAdsCommentDto(Integer count, List<AdsCommentDto> results) {
         this.count = count;
         this.results = results;
     }
@@ -15,7 +15,7 @@ public class ResponseWrapperAdsComment {
         return count;
     }
 
-    public List<AdsComment> getResults() {
+    public List<AdsCommentDto> getResults() {
         return results;
     }
 

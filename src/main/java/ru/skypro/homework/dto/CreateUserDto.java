@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
 
 
-public class CreateUser {
+public class CreateUserDto {
     @JsonProperty("email")
     private String email = null;
 
@@ -24,7 +24,7 @@ public class CreateUser {
     @JsonProperty("phone")
     private String phone = null;
 
-    public CreateUser email(String email) {
+    public CreateUserDto email(String email) {
         this.email = email;
         return this;
     }

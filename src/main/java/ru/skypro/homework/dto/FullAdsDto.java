@@ -2,10 +2,9 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.Objects;
 @Data
-public class FullAds {
+public class FullAdsDto {
 
     private String authorFirstName;
     private String authorLastName;
@@ -17,10 +16,10 @@ public class FullAds {
     private Integer price;
     private String title;
 
-    public FullAds(){}
+    public FullAdsDto(){}
 
-    public FullAds(String authorFirstName,String authorLastName, String description, String email,
-                   String phone,String image,int pk,int price,String title) {
+    public FullAdsDto(String authorFirstName, String authorLastName, String description, String email,
+                      String phone, String image, int pk, int price, String title) {
         this.authorFirstName = authorFirstName;
         this.authorLastName = authorLastName;
         this.description = description;
@@ -107,8 +106,8 @@ public class FullAds {
     @Override
       public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FullAds)) return false;
-        FullAds fullAds = (FullAds) o;
+        if (!(o instanceof FullAdsDto)) return false;
+        FullAdsDto fullAds = (FullAdsDto) o;
         return  Objects.equals(authorFirstName, fullAds.authorFirstName) && Objects.equals(authorLastName, fullAds.authorLastName) && Objects.equals(description, fullAds.description) && Objects.equals(email, fullAds.email) && Objects.equals(phone, fullAds.phone) && Objects.equals(image, fullAds.image) && Objects.equals(pk, fullAds.pk) && Objects.equals(price, fullAds.price) && Objects.equals(title, fullAds.title);
     }
 

@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
 
 
-public class CreateAds {
+public class CreateAdsDto {
     @JsonProperty("description")
     private String description = null;
 
@@ -25,7 +25,7 @@ public class CreateAds {
     @JsonProperty("title")
     private String title = null;
 
-    public CreateAds description(String description) {
+    public CreateAdsDto description(String description) {
         this.description = description;
         return this;
     }

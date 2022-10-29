@@ -3,9 +3,9 @@ package ru.skypro.homework.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.NewPassword;
-import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.dto.NewPasswordDto;
+import ru.skypro.homework.dto.ResponseWrapperUserDto;
+import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -22,30 +22,30 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public ResponseWrapperUser getUsers() {
+    public ResponseWrapperUserDto getUsers() {
         logger.info("Info getUsers");
-        User user1 = new User("email1", "firstName1", "lastName1", "phone1", 1);
-        User user2 = new User("email2", "firstName2", "lastName2", "phone2", 2);
-        List<User> listUsers = new ArrayList<>();
+        UserDto user1 = new UserDto("email1", "firstName1", "lastName1", "phone1", 1);
+        UserDto user2 = new UserDto("email2", "firstName2", "lastName2", "phone2", 2);
+        List<UserDto> listUsers = new ArrayList<>();
         listUsers.add(user1);
         listUsers.add(user2);
-        return new ResponseWrapperUser(2, listUsers);
+        return new ResponseWrapperUserDto(2, listUsers);
     }
 
-    public User updateUser(){
+    public UserDto updateUser(){
         logger.info("Info updateUser");
         Integer currUser = 5;
-        return new User("email3", "firstName3", "lastName3", "phone1", currUser);
+        return new UserDto("email3", "firstName3", "lastName3", "phone1", currUser);
     }
 
-    public NewPassword setPassword(){
+    public NewPasswordDto setPassword(){
         logger.info("Info setPasswod");
-        return new NewPassword ("currentPassword","newPassword");
+        return new NewPasswordDto("currentPassword","newPassword");
     }
 
-    public User getUser(Integer id){
+    public UserDto getUser(Integer id){
         logger.info("Info getUser");
-        return new User("email3", "firstName3", "lastName3", "phone1", id);
+        return new UserDto("email3", "firstName3", "lastName3", "phone1", id);
     }
 
 }

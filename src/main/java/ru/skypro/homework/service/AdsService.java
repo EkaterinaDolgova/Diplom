@@ -3,7 +3,7 @@ package ru.skypro.homework.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.repository.AdsRepository;
 
 @Service
@@ -27,7 +27,7 @@ public class AdsService {
 
     }
 
-    public <object> String getAdsMe(Ads.authenticated authenticated, String authority, object credentials, object details, object principal) {
+    public <object> String getAdsMe(AdsDto.authenticated authenticated, String authority, object credentials, object details, object principal) {
         logger.info("Info getAdsMe");
         return "OK";
 

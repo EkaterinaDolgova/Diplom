@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.service.AdsService;
 
 /**
@@ -72,7 +72,7 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/me")
-    public <object> String getAdsMe(@Parameter(description = "") @PathVariable Ads.authenticated authenticated,
+    public <object> String getAdsMe(@Parameter(description = "") @PathVariable AdsDto.authenticated authenticated,
                                     @Parameter(description = "") @PathVariable String authority,
                                     @Parameter(description = "") @PathVariable object credentials,
                                     @Parameter(description = "") @PathVariable object details,

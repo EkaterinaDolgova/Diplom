@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 /**Класс Объявление*/
-public class User {
+public class UserDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,7 +16,7 @@ public class User {
     private String phone;
 
 
-    public User(String email, String firstName, String lastName, String phone, Integer id) {
+    public UserDto(String email, String firstName, String lastName, String phone, Integer id) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -24,7 +24,7 @@ public class User {
         this.id = id;
     }
 
-    public User() {
+    public UserDto() {
     }
 
     public Integer getId() {

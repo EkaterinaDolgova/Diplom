@@ -3,7 +3,7 @@
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.AdsDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,15 +16,15 @@ import java.util.Objects;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
 
 
-public class ResponseWrapperAds   {
+public class ResponseWrapperAdsDto {
     @JsonProperty("count")
     private Integer count = null;
 
     @JsonProperty("results")
     @Valid
-    private List<Ads> results = null;
+    private List<AdsDto> results = null;
 
-    public ResponseWrapperAds count(Integer count) {
+    public ResponseWrapperAdsDto count(Integer count) {
         this.count = count;
         return this;
     }
@@ -44,7 +44,7 @@ public class ResponseWrapperAds   {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ResponseWrapperAds responseWrapperAdsDto = (ResponseWrapperAds) o;
+        ResponseWrapperAdsDto responseWrapperAdsDto = (ResponseWrapperAdsDto) o;
         return Objects.equals(this.count, responseWrapperAdsDto.count) &&
                 Objects.equals(this.results, responseWrapperAdsDto.results);
     }

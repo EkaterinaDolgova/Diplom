@@ -2,17 +2,15 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
-import javax.persistence.*;
-
 @Data
-public class LoginReq {
+public class LoginReqDto {
 
     private String password;
     private String username;
 
-    public LoginReq(){}
+    public LoginReqDto(){}
 
-    public LoginReq(String password, String username) {
+    public LoginReqDto(String password, String username) {
         this.password = password;
         this.username = username;
     }

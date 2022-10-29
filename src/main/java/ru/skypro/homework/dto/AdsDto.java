@@ -3,7 +3,7 @@ import javax.persistence.*;
 
 @Entity
 /**Класс Объявление*/
-public class Ads {
+public class AdsDto {
     public enum authenticated {
         TRUE,
         FALSE
@@ -28,7 +28,7 @@ public class Ads {
     }
 
 
-    public Ads(Integer author, String image, Integer pk, Integer price, String title) {
+    public AdsDto(Integer author, String image, Integer pk, Integer price, String title) {
         this.author = author;
         this.image = image;
         this.pk = pk;
@@ -36,7 +36,7 @@ public class Ads {
         this.title = title;
     }
 
-    public Ads() {
+    public AdsDto() {
 
     }
 
