@@ -1,88 +1,32 @@
 package ru.skypro.homework.dto;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.*;
+/**
+ * CreateAds
+ */
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
 
-@Entity
-/**Класс Создание Объявление */
+
 public class CreateAds {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @JsonProperty("description")
+    private String description = null;
 
-    private String description;
-    private String image;
-    private Integer pk;
-    private Integer price;
-    private String title;
+    @JsonProperty("image")
+    private String image = null;
 
-    public Long getId() {
-        return id;
-    }
+    @JsonProperty("pk")
+    private Integer pk = null;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @JsonProperty("price")
+    private Integer price = null;
 
-    public CreateAds(String description, String image, Integer pk, Integer price, String title) {
+    @JsonProperty("title")
+    private String title = null;
+
+    public CreateAds description(String description) {
         this.description = description;
-        this.image = image;
-        this.pk = pk;
-        this.price = price;
-        this.title = title;
-    }
-
-    public CreateAds() {
-
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Integer getPrice() {
-        return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public Integer getPk() {
-        return pk;
-    }
-
-    public void setPk(Integer pk) {
-        this.pk = pk;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    @Override
-    public String toString() {
-        return "CreateAds{" +
-                "description=" + description +
-                ", image='" + image + '\'' +
-                ", pk='" + pk + '\'' +
-                ", price='" + price + '\'' +
-                ", title='" + title + '\'' +
-                '}';
+        return this;
     }
 }

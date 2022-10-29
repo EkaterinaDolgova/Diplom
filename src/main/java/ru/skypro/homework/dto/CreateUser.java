@@ -1,88 +1,31 @@
-package ru.skypro.homework.dto;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.*;
+/**
+ * CreateUser
+ */
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
 
-@Entity
-/**Класс Создание Пользователя */
+
 public class CreateUser {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @JsonProperty("email")
+    private String email = null;
 
-    private String email;
-    private String firstName;
-    private String lastName;
-    private String password;
-    private String phone;
+    @JsonProperty("firstName")
+    private String firstName = null;
 
-    public Long getId() {
-        return id;
-    }
+    @JsonProperty("lastName")
+    private String lastName = null;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @JsonProperty("password")
+    private String password = null;
 
-    public CreateUser(String email, String firstName, String lastName, String password, String phone) {
+    @JsonProperty("phone")
+    private String phone = null;
+
+    public CreateUser email(String email) {
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.phone = phone;
-    }
-
-    public CreateUser() {
-
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    @Override
-    public String toString() {
-        return "CreateUser{" +
-                "email=" + email +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", password='" + password + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
+        return this;
     }
 }

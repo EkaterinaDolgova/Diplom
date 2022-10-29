@@ -1,5 +1,4 @@
 package ru.skypro.homework.dto;
-
 import javax.persistence.*;
 
 @Entity
@@ -92,4 +91,3 @@ public class Ads {
                 '}';
     }
 }
-
