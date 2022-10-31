@@ -4,8 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.AdsDto;
+import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.service.AdsService;
+
+import java.util.List;
 
 /**
  * Контроллер Объявления
@@ -34,7 +36,7 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads")
-    public String getAllAds() {
+    public List<Advert> getAllAds() {
         return adsService.getAllAds();
     }
 
@@ -60,7 +62,7 @@ public class AdsController {
     /**
      * Возвращает список объявлений.
      */
-    @Operation(
+ /*   @Operation(
             summary = "Получить список объявлений по параметрам",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"),
@@ -72,13 +74,13 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/me")
-    public <object> String getAdsMe(@Parameter(description = "") @PathVariable AdsDto.authenticated authenticated,
+    public <object> String getAdsMe(@Parameter(description = "") @PathVariable Advert.authenticated authenticated,
                                     @Parameter(description = "") @PathVariable String authority,
                                     @Parameter(description = "") @PathVariable object credentials,
                                     @Parameter(description = "") @PathVariable object details,
                                     @Parameter(description = "") @PathVariable object principal) {
         return adsService.getAdsMe(authenticated,authority,credentials,details,principal);
-    }
+    }*/
 
     /**
      * Возвращает список комментариев по ad_pk .

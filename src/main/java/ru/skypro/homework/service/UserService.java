@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapperUserDto;
-import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.entities.User;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -24,18 +24,18 @@ public class UserService {
 
     public ResponseWrapperUserDto getUsers() {
         logger.info("Info getUsers");
-        UserDto user1 = new UserDto("email1", "firstName1", "lastName1", "phone1", 1);
-        UserDto user2 = new UserDto("email2", "firstName2", "lastName2", "phone2", 2);
-        List<UserDto> listUsers = new ArrayList<>();
+        User user1 = new User("email1", "firstName1", "lastName1", "phone1", 1);
+        User user2 = new User("email2", "firstName2", "lastName2", "phone2", 2);
+        List<User> listUsers = new ArrayList<>();
         listUsers.add(user1);
         listUsers.add(user2);
         return new ResponseWrapperUserDto(2, listUsers);
     }
 
-    public UserDto updateUser(){
+    public User updateUser(){
         logger.info("Info updateUser");
         Integer currUser = 5;
-        return new UserDto("email3", "firstName3", "lastName3", "phone1", currUser);
+        return new User("email3", "firstName3", "lastName3", "phone1", currUser);
     }
 
     public NewPasswordDto setPassword(){
@@ -43,9 +43,9 @@ public class UserService {
         return new NewPasswordDto("currentPassword","newPassword");
     }
 
-    public UserDto getUser(Integer id){
+    public User getUser(Integer id){
         logger.info("Info getUser");
-        return new UserDto("email3", "firstName3", "lastName3", "phone1", id);
+        return new User("email3", "firstName3", "lastName3", "phone1", id);
     }
 
 }

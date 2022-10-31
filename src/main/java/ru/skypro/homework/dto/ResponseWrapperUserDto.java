@@ -1,12 +1,14 @@
 package ru.skypro.homework.dto;
 
+import ru.skypro.homework.entities.User;
+
 import java.util.List;
 
 public class ResponseWrapperUserDto {
     private Integer count;
-    private List<UserDto> results;
+    private List<User> results;
 
-    public ResponseWrapperUserDto(Integer count, List<UserDto> results) {
+    public ResponseWrapperUserDto(Integer count, List<User> results) {
         this.count = count;
         this.results = results;
     }
@@ -15,7 +17,7 @@ public class ResponseWrapperUserDto {
         return count;
     }
 
-    public List<UserDto> getResults() {
+    public List<User> getResults() {
         return results;
     }
 

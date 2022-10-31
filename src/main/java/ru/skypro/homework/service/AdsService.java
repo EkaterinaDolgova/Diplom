@@ -3,8 +3,10 @@ package ru.skypro.homework.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.AdsDto;
+import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.repository.AdsRepository;
+
+import java.util.List;
 
 @Service
 public class AdsService {
@@ -12,13 +14,17 @@ public class AdsService {
 
     private final AdsRepository adsRepository;
 
+    /**
+     * Возвращает все записи объявления.
+     *
+     * @return список записей объявления.
+     */
     public AdsService(AdsRepository adsRepository) {
         this.adsRepository = adsRepository;
     }
-    public String getAllAds() {
+    public List<Advert> getAllAds() {
         logger.info("Info getAllAds");
-        return "OK";
-
+        return adsRepository.findAll();
     }
 
     public String addAds() {
@@ -27,11 +33,11 @@ public class AdsService {
 
     }
 
-    public <object> String getAdsMe(AdsDto.authenticated authenticated, String authority, object credentials, object details, object principal) {
+   /* public <object> String getAdsMe(Advert.authenticated authenticated, String authority, object credentials, object details, object principal) {
         logger.info("Info getAdsMe");
         return "OK";
 
-    }
+    }*/
     public String getAdsComments(String ad_pk) {
         logger.info("Info getAdsComments");
         return "OK";
