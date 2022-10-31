@@ -1,8 +1,8 @@
 --Создание таблицы Объявлений
-CREATE TABLE ads
+CREATE TABLE advert
 (
     id     integer PRIMARY KEY,
-    author integer NOT NULL,
+    users integer NOT NULL,
     image  varchar(32),
     price  integer NOT NULL,
     title  varchar(32)

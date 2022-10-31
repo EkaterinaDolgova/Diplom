@@ -15,13 +15,13 @@ public class Advert {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
-    private Integer user;
+    private Integer users;
     private String image;
     private Integer price;
     private String title;
 
-    public Advert(Integer user, String image, Integer price, String title) {
-        this.user = user;
+    public Advert(Integer users, String image, Integer price, String title) {
+        this.users = users;
         this.image = image;
         this.price = price;
         this.title = title;
@@ -56,11 +56,11 @@ public class Advert {
     }
 
     public Integer getUser() {
-        return user;
+        return users;
     }
 
-    public void setUser(Integer user) {
-        this.user = user;
+    public void setUser(Integer users) {
+        this.users = users;
     }
 
     public Long getId() {
@@ -76,19 +76,19 @@ public class Advert {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Advert advert = (Advert) o;
-        return Objects.equals(id, advert.id) && Objects.equals(user, advert.user) && Objects.equals(image, advert.image) && Objects.equals(price, advert.price) && Objects.equals(title, advert.title);
+        return Objects.equals(id, advert.id) && Objects.equals(users, advert.users) && Objects.equals(image, advert.image) && Objects.equals(price, advert.price) && Objects.equals(title, advert.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, image, price, title);
+        return Objects.hash(id, users, image, price, title);
     }
 
     @Override
     public String toString() {
         return "Advert{" +
                 "id=" + id +
-                ", Пользователь=" + user +
+                ", Пользователь=" + users +
                 ", Картинка='" + image + '\'' +
                 ", Цена=" + price +
                 ", Наименование='" + title + '\'' +

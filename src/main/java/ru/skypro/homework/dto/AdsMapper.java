@@ -13,3 +13,6 @@ public interface AdsMapper {
      AdsDto createAdsDtoToAdvertEntity(Advert advert);
 */
 }
+
+
+
