@@ -24,8 +24,8 @@ public class UserService {
 
     public ResponseWrapperUserDto getUsers() {
         logger.info("Info getUsers");
-        User user1 = new User("email1", "firstName1", "lastName1", "phone1", 1);
-        User user2 = new User("email2", "firstName2", "lastName2", "phone2", 2);
+        User user1 = new User("email1", "firstName1", "lastName1", "phone1",1L);
+        User user2 = new User("email2", "firstName2", "lastName2", "phone2",1L );
         List<User> listUsers = new ArrayList<>();
         listUsers.add(user1);
         listUsers.add(user2);
@@ -34,7 +34,7 @@ public class UserService {
 
     public User updateUser(){
         logger.info("Info updateUser");
-        Integer currUser = 5;
+        Long currUser = 5L;
         return new User("email3", "firstName3", "lastName3", "phone1", currUser);
     }
 
@@ -45,7 +45,7 @@ public class UserService {
 
     public User getUser(Integer id){
         logger.info("Info getUser");
-        return new User("email3", "firstName3", "lastName3", "phone1", id);
+        return new User("email3", "firstName3", "lastName3", "phone1",1L);
     }
 
 }

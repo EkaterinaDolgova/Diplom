@@ -10,19 +10,18 @@ import java.time.OffsetDateTime;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
 
-
 public class AdsCommentDto {
-    @JsonProperty("author")
-    private Integer author = null;
-
-    @JsonProperty("createdAt")
-    private OffsetDateTime createdAt = null;
 
     @JsonProperty("pk")
-    private Integer pk = null;
+    private Long pk;
+    @JsonProperty("author")
+    private Integer author;
+
+    @JsonProperty("createdAt")
+    private OffsetDateTime createdAt;
 
     @JsonProperty("text")
-    private String text = null;
+    private String text;
 
     public AdsCommentDto author(Integer author) {
         this.author = author;

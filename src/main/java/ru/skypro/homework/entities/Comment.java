@@ -4,13 +4,16 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-@Entity
+
 /**Класс Отзыв*/
+@Entity
+@Table(name = "adsComment")
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @Column(name = "author")
     private Integer user;
     private OffsetDateTime createdAt;
     private String text;

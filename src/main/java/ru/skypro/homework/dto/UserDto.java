@@ -1,3 +1,5 @@
+package ru.skypro.homework.dto;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +21,7 @@ public class UserDto {
     private String firstName = null;
 
     @JsonProperty("id")
-    private Integer id = null;
+    private Long id = null;
 
     @JsonProperty("lastName")
     private String lastName = null;
@@ -67,7 +69,7 @@ public class UserDto {
         this.firstName = firstName;
     }
 
-    public UserDto id(Integer id) {
+    public UserDto id(Long id) {
         this.id = id;
         return this;
     }
@@ -79,11 +81,11 @@ public class UserDto {
      **/
     @Schema(description = "")
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
