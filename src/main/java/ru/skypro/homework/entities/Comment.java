@@ -1,11 +1,14 @@
 package ru.skypro.homework.entities;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
 
 /**Класс Отзыв*/
+@Data
 @Entity
 @Table(name = "adsComment")
 public class Comment {
@@ -13,14 +16,16 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @Column(name = "author")
-    private Integer user;
+    @Column(name = "users")
+    private Integer users;
+    @Column(name = "createdAt")
     private OffsetDateTime createdAt;
+    @Column(name = "text")
     private String text;
 
-    public Comment(Long id, Integer user, OffsetDateTime createdAt, String text) {
+    public Comment(Long id, Integer users, OffsetDateTime createdAt, String text) {
         this.id = id;
-        this.user = user;
+        this.users = users;
         this.createdAt = createdAt;
         this.text = text;
     }
@@ -37,12 +42,12 @@ public class Comment {
         this.id = id;
     }
 
-    public Integer getUser() {
-        return user;
+    public Integer getUsers() {
+        return users;
     }
 
-    public void setUser(Integer user) {
-        this.user = user;
+    public void setUsers(Integer users) {
+        this.users = users;
     }
 
     public OffsetDateTime getCreatedAt() {
@@ -66,19 +71,19 @@ public class Comment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id) && Objects.equals(user, comment.user) && Objects.equals(createdAt, comment.createdAt) && Objects.equals(text, comment.text);
+        return Objects.equals(id, comment.id) && Objects.equals(users, comment.users) && Objects.equals(createdAt, comment.createdAt) && Objects.equals(text, comment.text);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, createdAt, text);
+        return Objects.hash(id, users, createdAt, text);
     }
 
     @Override
     public String toString() {
         return "Comment{" +
                 "id=" + id +
-                ", Пользователь=" + user +
+                ", Пользователь=" + users +
                 ", Дата и время=" + createdAt +
                 ", Отзыв='" + text + '\'' +
                 '}';

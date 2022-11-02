@@ -3,16 +3,15 @@ package ru.skypro.homework.entities;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
 /**Класс Объявление*/
 @Entity
 @Table(name = "advert")
 public class Advert {
 
-   /* public enum authenticated {
+   public enum authenticated {
         TRUE,
         FALSE
-    }*/
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

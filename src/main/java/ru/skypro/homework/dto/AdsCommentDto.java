@@ -2,6 +2,7 @@ package ru.skypro.homework.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.Column;
 import java.time.OffsetDateTime;
 
 /**
@@ -13,6 +14,7 @@ import java.time.OffsetDateTime;
 public class AdsCommentDto {
 
     @JsonProperty("pk")
+    @Column(name = "pk", nullable = false)
     private Long pk;
     @JsonProperty("author")
     private Integer author;
