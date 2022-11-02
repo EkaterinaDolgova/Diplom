@@ -8,9 +8,9 @@ import ru.skypro.homework.entities.Comment;
 
 @Mapper(componentModel = "spring")
 public interface AdsCommentMapper {
-    AdsCommentMapper INSTANCE = Mappers.getMapper(AdsCommentMapper.class);
+  /*  AdsCommentMapper INSTANCE = Mappers.getMapper(AdsCommentMapper.class);
 
     @Mapping(source = "id", target = "pk")
     @Mapping(source = "users", target = "author")
-    AdsCommentDto toCommentDTO(Comment comment);
+    AdsCommentDto toCommentDTO(Comment comment);*/
 }

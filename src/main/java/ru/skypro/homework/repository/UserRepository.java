@@ -3,21 +3,22 @@ package ru.skypro.homework.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapperUserDto;
-import ru.skypro.homework.entities.User;
+import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.entities.Users;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<Users, Long> {
 
-    User getById(Long id);
-    User getByFirstName(String firstName);
-    User getByLastName(String lastName);
-    User getByPhone(String Phone);
-    User getByEmail(String email);
+    Users getById(Integer id);
+    Users getByFirstName(String firstName);
+    Users getByLastName(String lastName);
+    Users getByPhone(String Phone);
+    Users getByEmail(String email);
 
     default ResponseWrapperUserDto getUsers() {
         return null;
     }
 
-    default User getUser(Integer id) {
+    default Users getUser(Integer id) {
         return null;
     }
 
@@ -25,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
         return null;
     }
 
-    default User updateUser() {
+    default Users updateUser() {
         return null;
     }
 }

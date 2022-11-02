@@ -56,11 +56,11 @@ public class Advert {
         this.image = image;
     }
 
-    public Integer getUser() {
+    public Integer getUsers() {
         return users;
     }
 
-    public void setUser(Integer users) {
+    public void setUsers(Integer users) {
         this.users = users;
     }
 

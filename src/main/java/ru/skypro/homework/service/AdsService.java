@@ -68,8 +68,8 @@ public  class AdsService  {
         logger.info("Info removeAds");
         return "OK";
     }
-
-    public List<AdsDto> getAds(Integer id) {
+//@Override
+    public Advert getAds(Integer id) {
         logger.info("Info Список объявлений по id");
         return adsRepository.getById(id);
     }

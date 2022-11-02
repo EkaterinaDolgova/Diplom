@@ -5,7 +5,7 @@ import javax.persistence.*;
 /**Класс Пользователей*/
 @Entity
 @Table(name = "users")
-public class User {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -15,7 +15,7 @@ public class User {
     private String lastName;
     private String phone;
 
-    public User(String email, String firstName, String lastName, String phone, Long id) {
+    public Users(String email, String firstName, String lastName, String phone, Long id) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -23,7 +23,7 @@ public class User {
         this.id = id;
     }
 
-    public User() {
+    public Users() {
     }
 
     public Long getId() {
@@ -64,7 +64,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Users{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", firstName='" + firstName + '\'' +

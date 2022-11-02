@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapperUserDto;
-import ru.skypro.homework.entities.User;
+import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.service.UserService;
 
 import java.util.Optional;
@@ -52,7 +52,7 @@ public class UserController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/users/me")
-    public ResponseEntity<User> updateUser() {
+    public ResponseEntity<Users> updateUser() {
         return ResponseEntity.ok(userService.updateUser());
     }
 
@@ -88,7 +88,7 @@ public class UserController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Integer id) {
+    public ResponseEntity<Users> getUser(@PathVariable Integer id) {
         return Optional.ofNullable(userService.getUser(id))
                 .map(st -> ResponseEntity.ok(st))
                 .orElse(ResponseEntity.notFound().build());

@@ -3,7 +3,7 @@ package ru.skypro.homework.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import ru.skypro.homework.entities.User;
+import ru.skypro.homework.entities.Users;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -22,9 +22,9 @@ public class ResponseWrapperUserDto {
     private Integer count = null;
     @JsonProperty("results")
     @Valid
-    private List<User> results = null;
+    private List<Users> results = null;
 
-    public ResponseWrapperUserDto(Integer count, List<User> results) {
+    public ResponseWrapperUserDto(Integer count, List<Users> results) {
         this.count = count;
         this.results = results;
     }
@@ -49,14 +49,14 @@ public class ResponseWrapperUserDto {
         this.count = count;
     }
 
-    public ResponseWrapperUserDto results(List<User> results) {
+    public ResponseWrapperUserDto results(List<Users> results) {
         this.results = results;
         return this;
     }
 
-    public ResponseWrapperUserDto addResultsItem(User resultsItem) {
+    public ResponseWrapperUserDto addResultsItem(Users resultsItem) {
         if (this.results == null) {
-            this.results = new ArrayList<User>();
+            this.results = new ArrayList<Users>();
         }
         this.results.add(resultsItem);
         return this;
@@ -69,11 +69,11 @@ public class ResponseWrapperUserDto {
      **/
     @Schema(description = "")
     @Valid
-    public List<User> getResults() {
+    public List<Users> getResults() {
         return results;
     }
 
-    public void setResults(List<User> results) {
+    public void setResults(List<Users> results) {
         this.results = results;
     }
 
