@@ -69,7 +69,7 @@ public  class AdsService  {
         return "OK";
     }
 
-    public List<AdsDto> getAds(Integer id) {
+    public List<Advert> getAds(Integer id) {
         logger.info("Info Список объявлений по id");
         return adsRepository.getById(id);
     }

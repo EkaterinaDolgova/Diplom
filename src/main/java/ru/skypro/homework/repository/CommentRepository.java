@@ -5,7 +5,7 @@ import ru.skypro.homework.entities.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Comment getCommentById(Long id);
-    Comment getByUser (String name);
+//    Comment getByUser (String name);
 
     default String getAllAds() {
         return null;

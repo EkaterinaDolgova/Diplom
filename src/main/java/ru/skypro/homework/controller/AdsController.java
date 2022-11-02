@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.AdsMapper;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.service.AdsService;
 
