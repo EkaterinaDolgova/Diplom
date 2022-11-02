@@ -3,6 +3,7 @@ package ru.skypro.homework.entities;
 import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
 /**Класс Объявление*/
 @Entity
 @Table(name = "advert")
@@ -13,7 +14,7 @@ public class Advert {
         FALSE
     }*/
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
     private Integer users;

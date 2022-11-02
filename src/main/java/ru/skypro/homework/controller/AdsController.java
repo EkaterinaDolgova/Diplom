@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.web.bind.annotation.*;
+import ru.skypro.homework.dto.AdsMapper;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.service.AdsService;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 public class AdsController {
     private final AdsService adsService;
+  //  private final AdsMapper adsMapper;
 
     public AdsController(AdsService adsService) {
         this.adsService = adsService;
@@ -202,7 +204,7 @@ public class AdsController {
     /**
      * Поиск объявление по id .
      */
-    @Operation(
+ /*   @Operation(
             summary = "Поиск объявление по id.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
@@ -214,9 +216,9 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping ("/ads/{id}")
-    public String getAds(@Parameter(description = "id объявления") @PathVariable Integer id) {
-        return adsService.getAds(id);
-    }
+    public List<AdsDto> getAds(@Parameter(description = "id объявления") @PathVariable Integer id) {
+        return adsMapper.AdsDtoToAdvert(adsService.getAds(id));
+    }*/
 
     /**
      * Изменение объявление по id .
