@@ -4,20 +4,26 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "advert")
 /**Класс Объявление*/
 public class Advert {
 
-   /* public enum authenticated {
+
+    public enum authenticated {
         TRUE,
         FALSE
-    }*/
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+   // @Column(name = "id", nullable = false)
     private Long id;
+//    @Column(name = "users")
     private Integer users;
+  //  @Column(name = "image", length = 200)
     private String image;
+  //  @Column(name = "price")
     private Integer price;
+ //   @Column(name = "title", length = 200)
     private String title;
 
     public Advert(Integer users, String image, Integer price, String title) {
@@ -29,7 +35,6 @@ public class Advert {
     public Advert() {
 
     }
-
 
     public String getTitle() {
         return title;
@@ -55,11 +60,11 @@ public class Advert {
         this.image = image;
     }
 
-    public Integer getUser() {
+    public Integer getUsers() {
         return users;
     }
 
-    public void setUser(Integer users) {
+    public void setUsers(Integer users) {
         this.users = users;
     }
 

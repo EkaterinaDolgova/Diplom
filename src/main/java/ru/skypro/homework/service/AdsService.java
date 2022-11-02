@@ -3,13 +3,14 @@ package ru.skypro.homework.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.repository.AdsRepository;
 
 import java.util.List;
 
 @Service
-public class AdsService {
+public  class AdsService  {
     Logger logger = LoggerFactory.getLogger(AdsService.class);
 
     private final AdsRepository adsRepository;
@@ -68,9 +69,9 @@ public class AdsService {
         return "OK";
     }
 
-    public String getAds(Integer id) {
-        logger.info("Info getAds");
-        return "OK";
+    public List<AdsDto> getAds(Integer id) {
+        logger.info("Info Список объявлений по id");
+        return adsRepository.getById(id);
     }
 
     public String updateAds(Integer id) {
