@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.AdsMapper;
 import ru.skypro.homework.entities.Advert;
-import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.service.AdsService;
 
 import java.util.List;
@@ -27,6 +26,7 @@ public class AdsController {
 
     public AdsController(AdsService adsService, AdsMapper adsMapper) {
         this.adsService = adsService;
+
         this.adsMapper = adsMapper;
     }
     Logger logger = LoggerFactory.getLogger(AdsController.class);
