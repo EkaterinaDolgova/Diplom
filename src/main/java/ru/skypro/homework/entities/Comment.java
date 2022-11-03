@@ -8,9 +8,9 @@ import java.util.Objects;
 
 
 /**Класс Отзыв*/
-@Data
+
 @Entity
-@Table(name = "adsComment")
+@Table(name = "adscomment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +18,7 @@ public class Comment {
     private Long id;
     @Column(name = "users")
     private Integer users;
-    @Column(name = "createdAt")
+    @Column(name = "createdat")
     private OffsetDateTime createdAt;
     @Column(name = "text")
     private String text;

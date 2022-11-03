@@ -3,10 +3,15 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.AdsMapper;
 import ru.skypro.homework.entities.Advert;
+import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.service.AdsService;
 
 import java.util.List;
@@ -24,7 +29,7 @@ public class AdsController {
         this.adsService = adsService;
         this.adsMapper = adsMapper;
     }
-
+    Logger logger = LoggerFactory.getLogger(AdsController.class);
     /**
      * Возвращает список объявлений.
      */
@@ -199,8 +204,9 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @DeleteMapping ("/ads/{id}")
-    public String removeAds(@Parameter(description = "id объявления") @PathVariable Integer id) {
-        return adsService.removeAds(id);
+    public ResponseEntity removeAds(@Parameter(description = "id объявления") @PathVariable Long id) {
+        adsService.removeAds(id);
+        return ResponseEntity.ok().body(HttpStatus.OK);
     }
 
     /**
@@ -238,7 +244,7 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping ("/ads/{id}")
-    public String updateAds(@Parameter(description = "id объявления") @PathVariable Integer id) {
+    public String  updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         return adsService.updateAds(id);
     }
 }

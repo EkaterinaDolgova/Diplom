@@ -8,6 +8,10 @@ public interface AdsRepository extends JpaRepository<Advert, Long> {
 
     Advert getById(Long id);
 
+      void deleteById(Long id);
+
+
+
    // Advert getByUser(Integer idUser);
 
     Advert getByTitleLikeIgnoreCase(String title);
