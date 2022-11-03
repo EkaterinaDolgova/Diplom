@@ -14,6 +14,7 @@ import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.service.AdsService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Контроллер Объявления
@@ -45,8 +46,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads")
-    public List<Advert> getAllAds() {
-        return adsService.getAllAds();
+    public List<AdsDto> getAllAds() {
+        return adsService.getAllAds().stream().map(adsMapper::AdsDtoToAdvert).collect(Collectors.toList());
     }
 
     /**
@@ -64,8 +65,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads")
-    public String addAds() {
-        return adsService.addAds();
+    public AdsDto addAds(Advert advert) {
+        return adsMapper.AdsDtoToAdvert(adsService.addAds(advert));
     }
 
     /**
@@ -244,7 +245,7 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping ("/ads/{id}")
-    public String  updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
-        return adsService.updateAds(id);
+    public AdsDto  updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
+        return adsMapper.AdsDtoToAdvert(adsService.updateAds(id));
     }
 }

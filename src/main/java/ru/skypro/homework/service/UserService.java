@@ -43,9 +43,9 @@ public class UserService {
         return new NewPasswordDto("currentPassword","newPassword");
     }
 
-    public Users getUser(Integer id){
+    public Users getUser(Long id){
         logger.info("Info getUser");
-        return new Users("email3", "firstName3", "lastName3", "phone1",1L);
+        return userRepository.getById(id);
     }
 
 }

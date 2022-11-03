@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapperUserDto;
+import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.mappers.UserMapper;
 import ru.skypro.homework.service.UserService;
 
 import java.util.Optional;
@@ -18,9 +20,10 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserService userService, UserMapper userMapper) {
+        this.userService = userService; this.userMapper = userMapper;
     }
 
     @Operation(
@@ -52,8 +55,8 @@ public class UserController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/users/me")
-    public ResponseEntity<Users> updateUser() {
-        return ResponseEntity.ok(userService.updateUser());
+    public ResponseEntity<UserDto> updateUser() {
+        return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser()));
     }
 
     /**
@@ -88,8 +91,8 @@ public class UserController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/users/{id}")
-    public ResponseEntity<Users> getUser(@PathVariable Integer id) {
-        return Optional.ofNullable(userService.getUser(id))
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+        return Optional.ofNullable(userMapper.toUserDTO(userService.getUser(id)))
                 .map(st -> ResponseEntity.ok(st))
                 .orElse(ResponseEntity.notFound().build());
     }

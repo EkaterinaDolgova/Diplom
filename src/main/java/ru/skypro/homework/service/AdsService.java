@@ -29,9 +29,10 @@ public class AdsService {
         return adsRepository.findAll();
     }
 
-    public String addAds() {
+    public Advert addAds(Advert advert) {
         logger.info("Info addAds");
-        return "OK";
+        adsRepository.save(advert);
+        return advert;
 
     }
 
@@ -75,8 +76,8 @@ public class AdsService {
         return adsRepository.getById(id);
     }
 
-    public String updateAds(Long id) {
+    public Advert updateAds(Long id) {
         logger.info("Info updateAds");
-        return "OK";
+        return adsRepository.getById(id);
     }
 }
