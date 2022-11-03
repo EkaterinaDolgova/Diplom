@@ -6,9 +6,9 @@ import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.entities.Advert;
 public interface AdsRepository extends JpaRepository<Advert, Long> {
 
-    Advert getById(Long id);
+    Advert getById(Integer id);
 
-    Advert getByUser(Integer idUser);
+   // Advert getByUser(Integer idUser);
 
     Advert getByTitleLikeIgnoreCase(String title);
 

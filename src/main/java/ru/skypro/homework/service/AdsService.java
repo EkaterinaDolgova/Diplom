@@ -24,7 +24,7 @@ public  class AdsService  {
         this.adsRepository = adsRepository;
     }
     public List<Advert> getAllAds() {
-        logger.info("Info getAllAds");
+        logger.info("Info getAllAds - Все объявления");
         return adsRepository.findAll();
     }
 

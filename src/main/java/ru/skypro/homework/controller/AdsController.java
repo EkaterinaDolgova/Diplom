@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.web.bind.annotation.*;
+import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.AdsMapper;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.service.AdsService;
@@ -17,10 +18,11 @@ import java.util.List;
 @RestController
 public class AdsController {
     private final AdsService adsService;
-  //  private final AdsMapper adsMapper;
+    private final AdsMapper adsMapper;
 
-    public AdsController(AdsService adsService) {
+    public AdsController(AdsService adsService, AdsMapper adsMapper) {
         this.adsService = adsService;
+        this.adsMapper = adsMapper;
     }
 
     /**
@@ -204,7 +206,7 @@ public class AdsController {
     /**
      * Поиск объявление по id .
      */
- /*   @Operation(
+   @Operation(
             summary = "Поиск объявление по id.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
