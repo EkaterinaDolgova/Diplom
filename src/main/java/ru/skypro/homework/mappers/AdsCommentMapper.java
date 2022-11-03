@@ -10,7 +10,7 @@ import ru.skypro.homework.entities.Comment;
 public interface AdsCommentMapper {
   /*  AdsCommentMapper INSTANCE = Mappers.getMapper(AdsCommentMapper.class);
 
-    @Mapping(source = "id", target = "pk")
+    //@Mapping(source = "id", target = "pk")
     @Mapping(source = "users", target = "author")
     AdsCommentDto toCommentDTO(Comment comment);*/
 }

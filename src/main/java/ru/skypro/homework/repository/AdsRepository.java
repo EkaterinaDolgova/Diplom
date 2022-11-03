@@ -4,12 +4,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.entities.Advert;
-
-import java.util.List;
-
 public interface AdsRepository extends JpaRepository<Advert, Long> {
 
-    Advert getById(Integer id);
+    Advert getById(Long id);
 
     Advert getByUser(Integer idUser);
 
