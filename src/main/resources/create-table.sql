@@ -1,7 +1,7 @@
 --Создание таблицы Объявлений
 CREATE TABLE advert
 (
-    id     integer PRIMARY KEY,
+    id     bigint        PRIMARY KEY,
     users integer NOT NULL,
     image  varchar(32),
     price  integer NOT NULL,

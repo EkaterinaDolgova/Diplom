@@ -69,7 +69,7 @@ public  class AdsService  {
         return "OK";
     }
 //@Override
-    public Advert getAds(Integer id) {
+    public Advert getAds(Long id) {
         logger.info("Info Список объявлений по id");
         return adsRepository.getById(id);
     }

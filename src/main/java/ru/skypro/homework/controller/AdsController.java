@@ -218,7 +218,7 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping ("/ads/{id}")
-    public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Integer id) {
+    public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         Advert advert=adsService.getAds(id);
         return adsMapper.AdsDtoToAdvert(advert);
     }
