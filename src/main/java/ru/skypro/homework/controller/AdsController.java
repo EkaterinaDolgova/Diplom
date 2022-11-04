@@ -47,7 +47,7 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads")
     public List<AdsDto> getAllAds() {
-        return adsService.getAllAds().stream().map(adsMapper::AdsDtoToAdvert).collect(Collectors.toList());
+        return adsService.getAllAds().stream().map(adsMapper::adsDtoToAdvert).collect(Collectors.toList());
     }
 
     /**
@@ -65,8 +65,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads")
-    public AdsDto addAds(Advert advert) {
-        return adsMapper.AdsDtoToAdvert(adsService.addAds(advert));
+    public AdsDto addAds(AdsDto adsDto) {
+        return adsMapper.adsDtoToAdvert(adsService.addAds(adsMapper.advertToAdsDto(adsDto)));
     }
 
     /**
@@ -227,7 +227,7 @@ public class AdsController {
     @GetMapping ("/ads/{id}")
     public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         Advert advert=adsService.getAds(id);
-        return adsMapper.AdsDtoToAdvert(advert);
+        return adsMapper.adsDtoToAdvert(advert);
     }
 
     /**
@@ -246,6 +246,6 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping ("/ads/{id}")
     public AdsDto  updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
-        return adsMapper.AdsDtoToAdvert(adsService.updateAds(id));
+        return adsMapper.adsDtoToAdvert(adsService.updateAds(id));
     }
 }

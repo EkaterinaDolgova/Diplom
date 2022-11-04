@@ -22,9 +22,9 @@ public class ResponseWrapperUserDto {
     private Integer count = null;
     @JsonProperty("results")
     @Valid
-    private List<Users> results = null;
+    private List<UserDto> results = null;
 
-    public ResponseWrapperUserDto(Integer count, List<Users> results) {
+    public ResponseWrapperUserDto(Integer count, List<UserDto> results) {
         this.count = count;
         this.results = results;
     }
@@ -49,14 +49,14 @@ public class ResponseWrapperUserDto {
         this.count = count;
     }
 
-    public ResponseWrapperUserDto results(List<Users> results) {
+    public ResponseWrapperUserDto results(List<UserDto> results) {
         this.results = results;
         return this;
     }
 
-    public ResponseWrapperUserDto addResultsItem(Users resultsItem) {
+    public ResponseWrapperUserDto addResultsItem(UserDto resultsItem) {
         if (this.results == null) {
-            this.results = new ArrayList<Users>();
+            this.results = new ArrayList<UserDto>();
         }
         this.results.add(resultsItem);
         return this;
@@ -69,11 +69,11 @@ public class ResponseWrapperUserDto {
      **/
     @Schema(description = "")
     @Valid
-    public List<Users> getResults() {
+    public List<UserDto> getResults() {
         return results;
     }
 
-    public void setResults(List<Users> results) {
+    public void setResults(List<UserDto> results) {
         this.results = results;
     }
 
