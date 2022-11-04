@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.skypro.homework.entities.Advert;
-import ru.skypro.homework.mappers.UserMapper;
+//import ru.skypro.homework.mappers.UserMapper;
 
 @Mapper(componentModel="spring")
 public interface AdsMapper {

@@ -29,9 +29,10 @@ public class AdsService {
         return adsRepository.findAll();
     }
 
-    public void addAds(Advert advert) {
+    public Advert addAds(Advert advert) {
         logger.info("Info addAds Запись объявления");
         adsRepository.save(advert);
+        return advert;
     }
 
     /* public <object> String getAdsMe(Advert.authenticated authenticated, String authority, object credentials, object details, object principal) {
