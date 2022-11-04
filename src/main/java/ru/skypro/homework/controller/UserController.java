@@ -9,7 +9,6 @@ import ru.skypro.homework.dto.ResponseWrapperUserDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.dto.UserMapper;
 import ru.skypro.homework.entities.Users;
-//import ru.skypro.homework.mappers.UserMapper;
 import ru.skypro.homework.service.UserService;
 
 import java.util.List;
@@ -26,7 +25,8 @@ public class UserController {
     private final UserMapper userMapper;
 
     public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService; this.userMapper = userMapper;
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Operation(
