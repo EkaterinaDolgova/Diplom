@@ -3,6 +3,10 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.AdsMapper;
@@ -10,6 +14,7 @@ import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.service.AdsService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Контроллер Объявления
@@ -22,9 +27,10 @@ public class AdsController {
 
     public AdsController(AdsService adsService, AdsMapper adsMapper) {
         this.adsService = adsService;
+
         this.adsMapper = adsMapper;
     }
-
+    Logger logger = LoggerFactory.getLogger(AdsController.class);
     /**
      * Возвращает список объявлений.
      */
@@ -40,8 +46,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads")
-    public List<Advert> getAllAds() {
-        return adsService.getAllAds();
+    public List<AdsDto> getAllAds() {
+        return adsService.getAllAds().stream().map(adsMapper::adsDtoToAdvert).collect(Collectors.toList());
     }
 
     /**
@@ -59,8 +65,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads")
-    public String addAds() {
-        return adsService.addAds();
+    public AdsDto addAds(AdsDto adsDto) {
+        return adsMapper.adsDtoToAdvert(adsService.addAds(adsMapper.advertToAdsDto(adsDto)));
     }
 
     /**
@@ -199,8 +205,9 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @DeleteMapping ("/ads/{id}")
-    public String removeAds(@Parameter(description = "id объявления") @PathVariable Integer id) {
-        return adsService.removeAds(id);
+    public ResponseEntity removeAds(@Parameter(description = "id объявления") @PathVariable Long id) {
+        adsService.removeAds(id);
+        return ResponseEntity.ok().body(HttpStatus.OK);
     }
 
     /**
@@ -218,9 +225,9 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping ("/ads/{id}")
-    public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Integer id) {
+    public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         Advert advert=adsService.getAds(id);
-        return adsMapper.AdsDtoToAdvert(advert);
+        return adsMapper.adsDtoToAdvert(advert);
     }
 
     /**
@@ -238,7 +245,7 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping ("/ads/{id}")
-    public String updateAds(@Parameter(description = "id объявления") @PathVariable Integer id) {
-        return adsService.updateAds(id);
+    public AdsDto  updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
+        return adsMapper.adsDtoToAdvert(adsService.updateAds(id));
     }
 }

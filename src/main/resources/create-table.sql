@@ -1,7 +1,7 @@
 --Создание таблицы Объявлений
 CREATE TABLE advert
 (
-    id     integer PRIMARY KEY,
+    id     bigint        PRIMARY KEY,
     users integer NOT NULL,
     image  varchar(32),
     price  integer NOT NULL,
@@ -9,11 +9,11 @@ CREATE TABLE advert
 );
 
 --Создание таблицы Объявление комментарии
-CREATE TABLE adsComment
+CREATE TABLE adscomment
 (
-    id     integer PRIMARY KEY,
-    author integer NOT NULL,
-    createdAt  varchar(32),
+    id     bigint PRIMARY KEY,
+    users integer NOT NULL,
+    createdat  varchar(32),
     text  varchar(32)
 );
 

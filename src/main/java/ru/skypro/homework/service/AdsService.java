@@ -10,7 +10,7 @@ import ru.skypro.homework.repository.AdsRepository;
 import java.util.List;
 
 @Service
-public  class AdsService  {
+public class AdsService {
     Logger logger = LoggerFactory.getLogger(AdsService.class);
 
     private final AdsRepository adsRepository;
@@ -23,22 +23,23 @@ public  class AdsService  {
     public AdsService(AdsRepository adsRepository) {
         this.adsRepository = adsRepository;
     }
+
     public List<Advert> getAllAds() {
         logger.info("Info getAllAds - Все объявления");
         return adsRepository.findAll();
     }
 
-    public String addAds() {
-        logger.info("Info addAds");
-        return "OK";
-
+    public Advert addAds(Advert advert) {
+        logger.info("Info addAds Запись объявления");
+        adsRepository.save(advert);
+        return advert;
     }
 
-   /* public <object> String getAdsMe(Advert.authenticated authenticated, String authority, object credentials, object details, object principal) {
-        logger.info("Info getAdsMe");
-        return "OK";
+    /* public <object> String getAdsMe(Advert.authenticated authenticated, String authority, object credentials, object details, object principal) {
+         logger.info("Info getAdsMe");
+         return "OK";
 
-    }*/
+     }*/
     public String getAdsComments(String ad_pk) {
         logger.info("Info getAdsComments");
         return "OK";
@@ -64,18 +65,18 @@ public  class AdsService  {
         return "OK";
     }
 
-    public String removeAds(Integer id) {
-        logger.info("Info removeAds");
-        return "OK";
+    public void removeAds(Long id) {
+        logger.info("Info removeAds Удаление по id");
+        adsRepository.deleteById(id);
     }
-//@Override
-    public Advert getAds(Integer id) {
+
+    public Advert getAds(Long id) {
         logger.info("Info Список объявлений по id");
         return adsRepository.getById(id);
     }
 
-    public String updateAds(Integer id) {
+    public Advert updateAds(Long id) {
         logger.info("Info updateAds");
-        return "OK";
+        return adsRepository.getById(id);
     }
 }
