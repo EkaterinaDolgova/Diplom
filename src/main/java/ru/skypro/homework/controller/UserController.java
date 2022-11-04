@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapperUserDto;
 import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.UserMapper;
 import ru.skypro.homework.entities.Users;
-import ru.skypro.homework.mappers.UserMapper;
+//import ru.skypro.homework.mappers.UserMapper;
 import ru.skypro.homework.service.UserService;
 
 import java.util.List;
