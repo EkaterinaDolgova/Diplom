@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
+import ru.skypro.homework.entities.Image;
 
 import java.util.Objects;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-@Builder
+//@Builder
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
 
@@ -23,7 +24,7 @@ public class AdsDto {
     private Integer author = null;
 
     @JsonProperty("image")
-    private String image = null;
+    private Image image = null;
 
     @JsonProperty("pk")
     private Integer pk = null;
@@ -49,7 +50,7 @@ public class AdsDto {
         this.author = author;
     }
 
-    public AdsDto image(String image) {
+    public AdsDto image(Image image) {
         this.image = image;
         return this;
     }
@@ -60,11 +61,11 @@ public class AdsDto {
      **/
     @Schema(description = "")
 
-    public String getImage() {
+    public Image getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(Image image) {
         this.image = image;
     }
 

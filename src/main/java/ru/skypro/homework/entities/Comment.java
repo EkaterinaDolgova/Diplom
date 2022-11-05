@@ -23,6 +23,10 @@ public class Comment {
     @Column(name = "text")
     private String text;
 
+    @ManyToOne
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
+
     public Comment(Long id, Integer users, OffsetDateTime createdAt, String text) {
         this.id = id;
         this.users = users;

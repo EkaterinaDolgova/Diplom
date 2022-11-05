@@ -3,9 +3,10 @@ package ru.skypro.homework.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.entities.Advert;
+import ru.skypro.homework.entities.Comment;
 import ru.skypro.homework.repository.AdsRepository;
+import ru.skypro.homework.repository.CommentRepository;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class AdsService {
      *
      * @return список записей объявления.
      */
-    public AdsService(AdsRepository adsRepository) {
+    public AdsService(AdsRepository adsRepository, CommentRepository commentRepository) {
         this.adsRepository = adsRepository;
         this.commentRepository = commentRepository;
     }
