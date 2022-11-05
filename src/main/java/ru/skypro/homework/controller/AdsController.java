@@ -8,10 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.AdsDto;
-import ru.skypro.homework.dto.AdsMapper;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entities.Advert;
+import ru.skypro.homework.entities.Comment;
 import ru.skypro.homework.service.AdsService;
+import ru.skypro.homework.service.UserService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,12 +26,20 @@ public class AdsController {
     private final AdsService adsService;
     private final AdsMapper adsMapper;
 
-    public AdsController(AdsService adsService, AdsMapper adsMapper) {
+    private final AdsCommentMapper adsCommentMapper;
+
+    private final UserService userService;
+
+    public AdsController(AdsService adsService, AdsMapper adsMapper, AdsCommentMapper adsCommentMapper, UserService userService) {
         this.adsService = adsService;
 
         this.adsMapper = adsMapper;
+        this.adsCommentMapper = adsCommentMapper;
+        this.userService = userService;
     }
+
     Logger logger = LoggerFactory.getLogger(AdsController.class);
+
     /**
      * Возвращает список объявлений.
      */
@@ -47,7 +56,7 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads")
     public List<AdsDto> getAllAds() {
-        return adsService.getAllAds().stream().map(adsMapper::AdsDtoToAdvert).collect(Collectors.toList());
+        return adsService.getAllAds().stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
     }
 
     /**
@@ -65,14 +74,14 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads")
-    public AdsDto addAds(Advert advert) {
-        return adsMapper.AdsDtoToAdvert(adsService.addAds(advert));
+    public AdsDto addAds(AdsDto adsDto) {
+        return adsMapper.toAdsDTO(adsService.addAds(adsMapper.adsDTOtoAdvert(adsDto)));
     }
 
     /**
      * Возвращает список объявлений.
      */
- /*   @Operation(
+    @Operation(
             summary = "Получить список объявлений по параметрам",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"),
@@ -84,13 +93,19 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/me")
-    public <object> String getAdsMe(@Parameter(description = "") @PathVariable Advert.authenticated authenticated,
-                                    @Parameter(description = "") @PathVariable String authority,
-                                    @Parameter(description = "") @PathVariable object credentials,
-                                    @Parameter(description = "") @PathVariable object details,
-                                    @Parameter(description = "") @PathVariable object principal) {
-        return adsService.getAdsMe(authenticated,authority,credentials,details,principal);
-    }*/
+    public <object> ResponseEntity<ResponseWrapperAdsDto> getAdsMe(@Parameter(description = "") @PathVariable Advert.authenticated authenticated,
+                                                                   @Parameter(description = "") @PathVariable String authority,
+                                                                   @Parameter(description = "") @PathVariable object credentials,
+                                                                   @Parameter(description = "") @PathVariable object details,
+                                                                   @Parameter(description = "") @PathVariable object principal) {
+        //return adsService.getAdsMe(authenticated,authority,credentials,details,principal);
+        //Integer idUser = userService.getUser(id);
+        Integer idUser = 1; // Get User = Me !!!
+        List<Advert> adsList = adsService.getAdvertsByUserId(idUser);
+        List<AdsDto> adsDtoList = adsList.stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(new ResponseWrapperAdsDto(adsDtoList.size(), adsDtoList));
+
+    }
 
     /**
      * Возвращает список комментариев по ad_pk .
@@ -107,8 +122,10 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment")
-    public String getAdsComments(@Parameter(description = "") @PathVariable String ad_pk) {
-        return adsService.getAdsComments(ad_pk);
+    public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable String ad_pk) {
+        List<Comment> commentList = adsService.getAdsComments(ad_pk); // !!!
+        List<AdsCommentDto> adsCommentDtoList = commentList.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(new ResponseWrapperAdsCommentDto(adsCommentDtoList.size(), adsCommentDtoList));
     }
 
     /**
@@ -126,8 +143,10 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads/{ad_pk}/comment")
-    public String addAdsComments(@Parameter(description = "") @PathVariable String ad_pk) {
-        return adsService.addAdsComments(ad_pk);
+    public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable String ad_pk,
+                                  @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto)
+    {
+        return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto)));
     }
 
     /**
@@ -145,9 +164,9 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @DeleteMapping("/ads/{ad_pk}/comment/{id}")
-    public String deleteAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                   @Parameter(description = "") @PathVariable Integer id) {
-        return adsService.deleteAdsComment(ad_pk, id);
+    public void deleteAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
+                                 @Parameter(description = "") @PathVariable Integer id) {
+        adsService.deleteAdsComment(ad_pk, id);
     }
 
     /**
@@ -166,7 +185,14 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment/{id}")
     public String getAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                   @Parameter(description = "") @PathVariable Integer id) {
+                                                       @Parameter(description = "") @PathVariable Integer id) {
+
+/*
+        Comment comment = adsService. .getAdsComments(ad_pk); // !!!
+        List<AdsCommentDto> adsCommentDtoList = commentList.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(new ResponseWrapperAdsCommentDto(adsCommentDtoList.size(), adsCommentDtoList));
+
+*/
         return adsService.getAdsComment(ad_pk, id);
     }
 
@@ -184,9 +210,11 @@ public class AdsController {
             }
     )
     @CrossOrigin(value = "http://localhost:3000")
-    @PatchMapping ("/ads/{ad_pk}/comment/{id}")
+    @PatchMapping("/ads/{ad_pk}/comment/{id}")
     public String updateAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                   @Parameter(description = "") @PathVariable Integer id) {
+                                                          @Parameter(description = "") @PathVariable Integer id) {
+        //ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
+//        return ResponseEntity.ok(adsCommentMapper.toCommentDTO())
         return adsService.updateAdsComment(ad_pk, id);
     }
 
@@ -204,7 +232,7 @@ public class AdsController {
             }
     )
     @CrossOrigin(value = "http://localhost:3000")
-    @DeleteMapping ("/ads/{id}")
+    @DeleteMapping("/ads/{id}")
     public ResponseEntity removeAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         adsService.removeAds(id);
         return ResponseEntity.ok().body(HttpStatus.OK);
@@ -213,7 +241,7 @@ public class AdsController {
     /**
      * Поиск объявление по id .
      */
-   @Operation(
+    @Operation(
             summary = "Поиск объявление по id.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
@@ -224,10 +252,10 @@ public class AdsController {
             }
     )
     @CrossOrigin(value = "http://localhost:3000")
-    @GetMapping ("/ads/{id}")
+    @GetMapping("/ads/{id}")
     public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Long id) {
-        Advert advert=adsService.getAds(id);
-        return adsMapper.AdsDtoToAdvert(advert);
+        Advert advert = adsService.getAds(id);
+        return adsMapper.toAdsDTO(advert);
     }
 
     /**
@@ -244,8 +272,8 @@ public class AdsController {
             }
     )
     @CrossOrigin(value = "http://localhost:3000")
-    @PatchMapping ("/ads/{id}")
-    public AdsDto  updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
-        return adsMapper.AdsDtoToAdvert(adsService.updateAds(id));
+    @PatchMapping("/ads/{id}")
+    public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
+        return adsMapper.toAdsDTO(adsService.updateAds(id));
     }
 }

@@ -1,4 +1,4 @@
-
+package ru.skypro.homework.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +24,11 @@ public class ResponseWrapperAdsDto {
     @JsonProperty("results")
     @Valid
     private List<AdsDto> results = null;
+
+    public ResponseWrapperAdsDto(Integer count, List<AdsDto> results) {
+        this.count = count;
+        this.results = results;
+    }
 
     public ResponseWrapperAdsDto count(Integer count) {
         this.count = count;

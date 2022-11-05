@@ -8,7 +8,11 @@ import ru.skypro.homework.entities.Advert;
 public interface AdsMapper {
     @Mapping(source = "id", target = "pk")
     @Mapping(source = "users", target = "author")
-    AdsDto AdsDtoToAdvert(Advert advert);
+    AdsDto toAdsDTO(Advert advert);
+
+    @Mapping(source = "pk", target = "id")
+    @Mapping(source = "author", target = "users")
+    Advert adsDTOtoAdvert(AdsDto adsDto);
 
 }
 

@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapperUserDto;
 import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.UserMapper;
 import ru.skypro.homework.entities.Users;
-import ru.skypro.homework.mappers.UserMapper;
 import ru.skypro.homework.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Контроллер Объявления для User
@@ -23,7 +25,8 @@ public class UserController {
     private final UserMapper userMapper;
 
     public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService; this.userMapper = userMapper;
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Operation(
@@ -38,7 +41,8 @@ public class UserController {
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/users/me")
     public ResponseEntity<ResponseWrapperUserDto> getUsers() {
-        return ResponseEntity.ok(userService.getUsers());
+        List<UserDto> userDtoList= userService.getUsers().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(new ResponseWrapperUserDto(userDtoList.size(),userDtoList));
     }
 
     /**
@@ -55,8 +59,9 @@ public class UserController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/users/me")
-    public ResponseEntity<UserDto> updateUser() {
-        return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser()));
+    public ResponseEntity<UserDto> updateUser(UserDto userDto) {
+
+        return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
     }
 
     /**

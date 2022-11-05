@@ -14,6 +14,7 @@ public class AdsService {
     Logger logger = LoggerFactory.getLogger(AdsService.class);
 
     private final AdsRepository adsRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * Возвращает все записи объявления.
@@ -22,6 +23,7 @@ public class AdsService {
      */
     public AdsService(AdsRepository adsRepository) {
         this.adsRepository = adsRepository;
+        this.commentRepository = commentRepository;
     }
 
     public List<Advert> getAllAds() {
@@ -31,7 +33,8 @@ public class AdsService {
 
     public Advert addAds(Advert advert) {
         logger.info("Info addAds Запись объявления");
-        return adsRepository.save(advert);
+        adsRepository.save(advert);
+        return advert;
     }
 
     /* public <object> String getAdsMe(Advert.authenticated authenticated, String authority, object credentials, object details, object principal) {
@@ -39,9 +42,9 @@ public class AdsService {
          return "OK";
 
      }*/
-    public String getAdsComments(String ad_pk) {
-        logger.info("Info getAdsComments");
-        return "OK";
+    public List<Comment> getAdsComments(String ad_pk) {
+        logger.info("Info getAdsComments"); // !!!
+        return commentRepository.getCommentById(ad_pk);
     }
 
     public String addAdsComments(String ad_pk) {
@@ -49,9 +52,11 @@ public class AdsService {
         return "OK";
     }
 
-    public String deleteAdsComment(String ad_pk, Integer id) {
+    public void deleteAdsComment(String ad_pk, Integer id) {
         logger.info("Info deleteAdsComment");
-        return "OK";
+        // ad_pk
+        // Comment comment = commentRepository.getCommentById(String.valueOf(id));
+        commentRepository.deleteById(Long.valueOf(id));
     }
 
     public String getAdsComment(String ad_pk, Integer id) {
@@ -78,4 +83,16 @@ public class AdsService {
         logger.info("Info updateAds");
         return adsRepository.getById(id);
     }
+
+    public List<Advert> getAdvertsByUserId(Integer id) {
+        logger.info("Info getAdsMe");
+        return adsRepository.getAdvertsByUsers(id);
+    }
+
+    public Comment addComment(String ad_pk,Comment comment){
+        logger.info("Info addComment");
+        // ad_pk !!!
+       return commentRepository.save(comment);
+    }
+
 }

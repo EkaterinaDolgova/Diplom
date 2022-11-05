@@ -8,5 +8,9 @@ import ru.skypro.homework.entities.Comment;
 public interface AdsCommentMapper {
     @Mapping(source = "id", target = "pk")
     @Mapping(source = "users", target = "author")
-    AdsCommentDto CommentDtoToComment(Comment comment);
+    AdsCommentDto toCommentDTO(Comment comment);
+
+    @Mapping(source = "pk", target = "id")
+    @Mapping(source = "author", target = "users")
+    Comment toAsdComment(AdsCommentDto adsCommentDto);
 }
