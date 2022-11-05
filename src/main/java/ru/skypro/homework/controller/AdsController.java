@@ -143,9 +143,10 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads/{ad_pk}/comment")
-    public Comment addAdsComments(@Parameter(description = "") @PathVariable String ad_pk,
-                                  @Parameter(description = "") @PathVariable Comment comment) {
-        return adsService.addComment(ad_pk, comment);
+    public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable String ad_pk,
+                                  @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto)
+    {
+        return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto)));
     }
 
     /**
