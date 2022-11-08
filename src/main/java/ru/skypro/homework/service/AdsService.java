@@ -32,6 +32,10 @@ public class AdsService {
         return adsRepository.findAll();
     }
 
+    public List<Advert> getAllAdsName(String name) {
+        logger.info("Info getAllAds - Все объявления по наименованию");
+        return adsRepository.getAllAdsNameS(name);
+    }
     public Advert addAds(Advert advert) {
         logger.info("Info addAds Запись объявления");
         adsRepository.save(advert);

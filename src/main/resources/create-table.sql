@@ -26,6 +26,15 @@ CREATE TABLE users
     lastName   varchar(32),
     phone      varchar(32)
 );
+--Создание таблицы Картинки
+CREATE TABLE image
+(
+    id     bigint PRIMARY KEY,
+    filePath  varchar(32),
+    fileSize  bigint,
+    mediaType   varchar(32),
+    data      oid
+);
 
 
 

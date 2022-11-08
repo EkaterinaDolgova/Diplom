@@ -58,6 +58,24 @@ public class AdsController {
     public List<AdsDto> getAllAds() {
         return adsService.getAllAds().stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
     }
+    /**
+     * Возвращает список объявлений по поиску наименования.
+     */
+    @Operation(
+            summary = "Получить список объявлений по поиску наименования",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"),
+                    @ApiResponse(responseCode = "201", description = "Созданный"),
+                    @ApiResponse(responseCode = "401", description = "Неавторизованный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "404", description = "Не найдено")
+            }
+    )
+    @CrossOrigin(value = "http://localhost:3000")
+    @GetMapping("/ads/search/{name}")
+    public List<AdsDto> getAllAdsName(@Parameter(description = "Введите наименование объявления") @PathVariable String name) {
+        return adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+    }
 
     /**
      * Добавить объявления.

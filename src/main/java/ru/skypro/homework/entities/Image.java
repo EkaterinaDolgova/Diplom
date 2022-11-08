@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "image")
 public class Image {
     @Id
     @GeneratedValue
@@ -79,11 +80,11 @@ public class Image {
         return Objects.hash(id, filePath, fileSize);
     }
 
-   /* public Advert getStudent() {
+    public Advert getAdvert() {
         return advert;
     }
 
-    public void setStudent(Advert advert) {
+    public void setAdvert(Advert advert) {
         this.advert= advert;
-    }*/
+    }
 }

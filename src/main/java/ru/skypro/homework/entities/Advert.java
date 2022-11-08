@@ -16,7 +16,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Advert {
 
-   public enum authenticated {
+
+    public enum authenticated {
         TRUE,
         FALSE
     }
@@ -94,4 +95,6 @@ public class Advert {
                 ", Наименование='" + title + '\'' +
                 '}';
     }
+
+
 }
