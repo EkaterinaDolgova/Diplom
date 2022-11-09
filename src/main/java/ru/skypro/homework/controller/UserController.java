@@ -2,6 +2,8 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.NewPasswordDto;
@@ -23,6 +25,8 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+
+    Logger logger = LoggerFactory.getLogger(UserController.class);
 
     public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
@@ -59,8 +63,8 @@ public class UserController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/users/me")
-    public ResponseEntity<UserDto> updateUser(UserDto userDto) {
-
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+        logger.info("Info updateUser");
         return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
     }
 
