@@ -8,7 +8,9 @@ import ru.skypro.homework.entities.Comment;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.CommentRepository;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AdsService {
@@ -26,15 +28,16 @@ public class AdsService {
         this.adsRepository = adsRepository;
         this.commentRepository = commentRepository;
     }
-
+    /*Отсортированы в алфавитном порядке по названию*/
     public List<Advert> getAllAds() {
         logger.info("Info getAllAds - Все объявления");
-        return adsRepository.findAll();
+        return adsRepository.findAll().stream().sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
-
+    /*Список объявлений отсортирован по авторам*/
     public List<Advert> getAllAdsName(String name) {
         logger.info("Info getAllAds - Все объявления по наименованию");
-        return adsRepository.getAllAdsNameS(name);
+        return adsRepository.getAllAdsNameS(name).stream()
+                .sorted(Comparator.comparing(Advert::getUsers)).collect(Collectors.toList());
     }
     public Advert addAds(Advert advert) {
         logger.info("Info addAds Запись объявления");
@@ -47,9 +50,11 @@ public class AdsService {
          return "OK";
 
      }*/
+    /*Список комментариев отсортирован по дате добавления, начиная с самого позднего*/
     public List<Comment> getAdsComments(String ad_pk) {
         logger.info("Info getAdsComments"); // !!!
-        return commentRepository.getCommentById(ad_pk);
+        return commentRepository.getCommentById(ad_pk).stream()
+                .sorted(Comparator.comparing(Comment::getCreatedAt).reversed()).collect(Collectors.toList());
     }
 
     public String addAdsComments(String ad_pk) {
@@ -88,10 +93,11 @@ public class AdsService {
         logger.info("Info updateAds");
         return adsRepository.getById(id);
     }
-
+   /* Объявления одного пользователя отсортированы по названию в алфавитном порядке*/
     public List<Advert> getAdvertsByUserId(Integer id) {
         logger.info("Info getAdsMe");
-        return adsRepository.getAdvertsByUsers(id);
+        return adsRepository.getAdvertsByUsers(id).stream()
+                .sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
 
     public Comment addComment(String ad_pk,Comment comment){

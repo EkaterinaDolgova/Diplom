@@ -10,7 +10,9 @@ import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -25,7 +27,8 @@ public class UserService {
 
     public List<Users> getUsers() {
         logger.info("Info getUsers");
-        return userRepository.findAll();
+        return userRepository.findAll().stream()
+                .sorted(Comparator.comparing(Users::getLastName)).collect(Collectors.toList());
     }
 
     public Users updateUser(Users user){
