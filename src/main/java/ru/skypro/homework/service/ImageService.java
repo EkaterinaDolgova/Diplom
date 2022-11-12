@@ -23,7 +23,7 @@ import static io.swagger.v3.core.util.AnnotationsUtils.getExtensions;
 @Service
 public class ImageService {
     Logger logger = LoggerFactory.getLogger(ImageService.class);
-   // @Value("${path.to.images.folder}")
+    @Value("images")
     private String imagesDir;
     private final ImageRepository imageRepository;
     private final AdsRepository adsRepository;
@@ -37,7 +37,7 @@ public class ImageService {
      *
      * @return загрузка картинок.
      */
-   /* public void uploadImage(Long advert_id, MultipartFile imageFile) throws Exception {
+   public void uploadImage(Long advert_id, MultipartFile imageFile) throws Exception {
         Advert advert = adsRepository.findById(advert_id).orElseThrow(() -> new AdsNotFoundException("Картинка не найдена"));
         Path filePath = Path.of(imagesDir, advert + "." + getExtensions(imageFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -51,7 +51,6 @@ public class ImageService {
             bis.transferTo(bos);
         }
         Image image = findAdvertImage(advert_id);
-        //avatar.setStudent(studentRepository.findById(studentId).orElseThrow(()->new StudentNotFoundException("Студент не найден")));
         image.setAdvert(advert);
         image.setFilePath(filePath.toString());
         image.setFileSize(imageFile.getSize());
@@ -70,6 +69,6 @@ public class ImageService {
         logger.info("Info getExtensions");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
 
-    }*/
+    }
 
 }

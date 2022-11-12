@@ -21,7 +21,7 @@ public class ImageController {
     /**
      * Загрузка картинки объявления.
      */
-  /*  @Operation(
+   @Operation(
             summary = "Загрузить картинки объявлений",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Картинки успешно загружена"),
@@ -31,10 +31,10 @@ public class ImageController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
-    @CrossOrigin(value = "http://localhost:3000")
-    @PostMapping(value = "image/{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadAvatar(@PathVariable Long studentId, @RequestParam MultipartFile avatar) throws Exception {
-        imageService.uploadImage(studentId, avatar);
+    @CrossOrigin(value = "http://localhost:8080")
+    @PostMapping(value = "image/{advertId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadAvatar(@PathVariable Long advertId, @RequestParam MultipartFile image) throws Exception {
+        imageService.uploadImage(advertId, image);
         return ResponseEntity.ok().build();
-    }*/
+    }
 }
