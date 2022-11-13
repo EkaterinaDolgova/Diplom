@@ -58,7 +58,6 @@ public class AdsController {
     public List<AdsDto> getAllAds() {
         return adsService.getAllAds().stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
     }
-
     /**
      * Возвращает список объявлений по поиску наименования.
      */
@@ -93,7 +92,7 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads")
-    public AdsDto addAds(@RequestBody AdsDto adsDto) {
+    public AdsDto addAds(AdsDto adsDto) {
         return adsMapper.toAdsDTO(adsService.addAds(adsMapper.adsDTOtoAdvert(adsDto)));
     }
 
@@ -163,7 +162,8 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads/{ad_pk}/comment")
     public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable String ad_pk,
-                                        @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto) {
+                                  @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto)
+    {
         return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto)));
     }
 
@@ -203,7 +203,7 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment/{id}")
     public String getAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                @Parameter(description = "") @PathVariable Integer id) {
+                                                       @Parameter(description = "") @PathVariable Integer id) {
 
 /*
         Comment comment = adsService. .getAdsComments(ad_pk); // !!!
@@ -230,7 +230,7 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{ad_pk}/comment/{id}")
     public String updateAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                   @Parameter(description = "") @PathVariable Integer id) {
+                                                          @Parameter(description = "") @PathVariable Integer id) {
         //ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
 //        return ResponseEntity.ok(adsCommentMapper.toCommentDTO())
         return adsService.updateAdsComment(ad_pk, id);
