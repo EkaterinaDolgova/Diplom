@@ -15,13 +15,15 @@ import ru.skypro.homework.service.ImageService;
  */
 
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 public class ImageController {
     Logger logger = LoggerFactory.getLogger(AdsController.class);
     private ImageService imageService;
-    /**
-     * Загрузка картинки объявления.
-     */
-   @Operation(
+
+    public ImageController (ImageService imageService) {
+        this.imageService = imageService;
+    }
+   /*@Operation(
             summary = "Загрузить картинки объявлений",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Картинки успешно загружена"),
@@ -31,10 +33,9 @@ public class ImageController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
-    @CrossOrigin(value = "http://localhost:8080")
-    @PostMapping(value = "image/{advertId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadAvatar(@PathVariable Long advertId, @RequestParam MultipartFile image) throws Exception {
-        imageService.uploadImage(advertId, image);
+   @PatchMapping(value = "image/{advertId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateImage(@PathVariable Long advertId, @RequestParam MultipartFile image) throws Exception {
+        imageService.updateImage(advertId, image);
         return ResponseEntity.ok().build();
-    }
+    }*/
 }

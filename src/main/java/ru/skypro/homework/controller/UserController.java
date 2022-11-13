@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  * Контроллер Объявления для User
  */
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 public class UserController {
 
     private final UserService userService;
@@ -38,7 +39,6 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
-    @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/users/me")
     public ResponseEntity<ResponseWrapperUserDto> getUsers() {
         List<UserDto> userDtoList= userService.getUsers().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
@@ -57,7 +57,6 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
-    @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/users/me")
     public ResponseEntity<UserDto> updateUser(UserDto userDto) {
 
@@ -76,7 +75,6 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
-    @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/users/set_password")
     public ResponseEntity<NewPasswordDto> setPassword() {
         return ResponseEntity.ok(userService.setPassword());
@@ -94,7 +92,6 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
-    @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
         return Optional.ofNullable(userMapper.toUserDTO(userService.getUser(id)))
