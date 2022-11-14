@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.skypro.homework.WebSecurityConfig;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
@@ -29,13 +31,14 @@ public class AdsController {
     private final AdsCommentMapper adsCommentMapper;
 
     private final UserService userService;
+    private final WebSecurityConfig webSecurityConfig;
 
-    public AdsController(AdsService adsService, AdsMapper adsMapper, AdsCommentMapper adsCommentMapper, UserService userService) {
+    public AdsController(AdsService adsService, AdsMapper adsMapper, AdsCommentMapper adsCommentMapper, UserService userService, WebSecurityConfig webSecurityConfig) {
         this.adsService = adsService;
-
         this.adsMapper = adsMapper;
         this.adsCommentMapper = adsCommentMapper;
         this.userService = userService;
+        this.webSecurityConfig = webSecurityConfig;
     }
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
@@ -43,13 +46,14 @@ public class AdsController {
     /**
      * Возвращает список объявлений.
      */
+
     @Operation(
             summary = "Получить список объявлений",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
@@ -147,10 +151,10 @@ public class AdsController {
     }
 
     /**
-     * Возвращает список комментариев по ad_pk .
+     * Создание комментариев по ad_pk .
      */
     @Operation(
-            summary = "Возвращает список комментариев по ad_pk",
+            summary = "Создание комментариев по ad_pk",
             responses = {
                     @ApiResponse(responseCode = "200", description = "ОК"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
@@ -170,6 +174,7 @@ public class AdsController {
     /**
      * Удаление комментария по id .
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Удаление комментария по id .",
             responses = {
@@ -217,13 +222,14 @@ public class AdsController {
     /**
      * Изменение комментария по id .
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Изменение комментария по id .",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
@@ -239,13 +245,14 @@ public class AdsController {
     /**
      * Удаление объявление по id .
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Удаление объявление по id.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
@@ -265,7 +272,7 @@ public class AdsController {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
@@ -279,13 +286,14 @@ public class AdsController {
     /**
      * Изменение объявление по id .
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Изменение объявление по id.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
