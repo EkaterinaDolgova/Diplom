@@ -14,13 +14,15 @@ public class Users {
     private String firstName;
     private String lastName;
     private String phone;
+    private String role;
 
-    public Users(String email, String firstName, String lastName, String phone, Long id) {
+    public Users(String email, String firstName, String lastName, String phone, Long id, String role) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.id = id;
+        this.role = role;
     }
 
     public Users() {
@@ -71,6 +73,14 @@ public class Users {
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
 

@@ -9,17 +9,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
+import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -30,19 +34,17 @@ import java.util.stream.Collectors;
 public class AdsController {
     private final AdsService adsService;
     private final AdsMapper adsMapper;
-
+    private final ImageService imageService;
     private final AdsCommentMapper adsCommentMapper;
-
     private final UserService userService;
-    private final WebSecurityConfig webSecurityConfig;
 
-    public AdsController(AdsService adsService, AdsMapper adsMapper, AdsCommentMapper adsCommentMapper, UserService userService) {
+
+    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService) {
         this.adsService = adsService;
-
         this.adsMapper = adsMapper;
+        this.imageService = imageService;
         this.adsCommentMapper = adsCommentMapper;
         this.userService = userService;
-        this.webSecurityConfig = webSecurityConfig;
     }
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
@@ -69,6 +71,7 @@ public class AdsController {
     /**
      * Возвращает список объявлений по поиску наименования.
      */
+
     @Operation(
             summary = "Получить список объявлений по поиску наименования",
             responses = {
@@ -81,9 +84,23 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/search/{name}")
-    public ResponseEntity <ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите наименование объявления") @PathVariable String name) {
-        List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
+    public ResponseEntity <ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите наименование объявления") @PathVariable String name, Authentication authentication) {
+        //Поиск id из таблицы users по авторизованному имени пользователя
+        Optional
+                <Users> idUserFind= userService.getUsers().stream()
+                 .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst();
+        //Получение id users
+        Long idUser = idUserFind.stream().findFirst().get().getId();
+        int i = idUser.intValue();
+        //Проверяем есть ли у данного пользователя объявление
+         if (adsService.getAllAds().stream().anyMatch(advert -> advert.getUsers().equals((i)) == true))
+         {
+             List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+             return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
+        }
+         //иначе нужно выкинуть ошибку 403
+         throw new AdsNotFoundException("403!");
+
     }
 
     /**
