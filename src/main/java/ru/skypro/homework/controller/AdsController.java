@@ -9,18 +9,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
+import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.exception.AdsNotFoundException;
+import ru.skypro.homework.exception.AuthorizedUserNotFoundException;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -28,25 +32,20 @@ import java.util.stream.Collectors;
  */
 
 @RestController
-@CrossOrigin(value = "http://localhost:3000")
 public class AdsController {
     private final AdsService adsService;
     private final AdsMapper adsMapper;
-
+    private final ImageService imageService;
     private final AdsCommentMapper adsCommentMapper;
-
     private final UserService userService;
 
-    private final ImageService imageService;
 
-    public AdsController(AdsService adsService, AdsMapper adsMapper, AdsCommentMapper adsCommentMapper,
-                         UserService userService,ImageService imageService) {
+    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService) {
         this.adsService = adsService;
-
         this.adsMapper = adsMapper;
+        this.imageService = imageService;
         this.adsCommentMapper = adsCommentMapper;
         this.userService = userService;
-        this.imageService = imageService;
     }
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
@@ -64,6 +63,7 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads")
     public ResponseEntity <ResponseWrapperAdsDto> getAllAds() {
         List<AdsDto> listAdsDto = adsService.getAllAds().stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
@@ -72,6 +72,7 @@ public class AdsController {
     /**
      * Возвращает список объявлений по поиску наименования.
      */
+
     @Operation(
             summary = "Получить список объявлений по поиску наименования",
             responses = {
@@ -84,9 +85,25 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/search/{name}")
-    public ResponseEntity <ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите наименование объявления") @PathVariable String name) {
-        List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
+    public ResponseEntity <ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите имя пользователя") @PathVariable String name, Authentication authentication) {
+        //Поиск id из таблицы users по авторизованному имени пользователя
+        /* Optional
+                <Users> idUserFind= userService.getUsers().stream()
+                 .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst();*/
+        //Получение id users
+        Long idUser =  userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(()->new AuthorizedUserNotFoundException("Ошибка 404: пользователь не найден")).getId();
+        int i = idUser.intValue();
+        //Проверяем есть ли у данного пользователя объявление
+         if (adsService.getAllAds().stream().anyMatch(advert -> advert.getUsers().equals((i))))
+         {
+             List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+             return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
+        }
+         else //иначе нужно выкинуть ошибку 403  403??? Почему? Мы просто не нашли объявления, что запрещено?
+         {throw new AdsNotFoundException("Ошибка 404: объявления не найдены");}
+
     }
 
     /**
@@ -125,6 +142,7 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/me")
     public <object> ResponseEntity<ResponseWrapperAdsDto> getAdsMe(@Parameter(description = "") @PathVariable Advert.authenticated authenticated,
                                                                    @Parameter(description = "") @PathVariable String authority,
@@ -153,6 +171,7 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment")
     public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable String ad_pk) {
         List<Comment> commentList = adsService.getAdsComments(ad_pk); // !!!
@@ -173,6 +192,7 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads/{ad_pk}/comment")
     public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable String ad_pk,
                                   @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto)
@@ -194,6 +214,7 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @DeleteMapping("/ads/{ad_pk}/comment/{id}")
     public void deleteAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
                                  @Parameter(description = "") @PathVariable Integer id) {
@@ -213,6 +234,7 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment/{id}")
     public String getAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
                                                        @Parameter(description = "") @PathVariable Integer id) {
@@ -236,10 +258,11 @@ public class AdsController {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{ad_pk}/comment/{id}")
     public String updateAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
                                                           @Parameter(description = "") @PathVariable Integer id) {
@@ -258,10 +281,11 @@ public class AdsController {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @DeleteMapping("/ads/{id}")
     public ResponseEntity removeAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         adsService.removeAds(id);
@@ -277,10 +301,11 @@ public class AdsController {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{id}")
     public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         Advert advert = adsService.getAds(id);
@@ -297,10 +322,11 @@ public class AdsController {
                     @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
+                    @ApiResponse(responseCode = "403", description = "Запрещенно"),
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{id}")
     public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         return adsMapper.toAdsDTO(adsService.updateAds(id));

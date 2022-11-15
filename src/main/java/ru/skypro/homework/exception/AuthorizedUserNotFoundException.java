@@ -4,8 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class AdsNotFoundException extends RuntimeException {
-        public AdsNotFoundException(String s) {
-            super(s);
-        }
+public class AuthorizedUserNotFoundException extends RuntimeException{
+
+    public AuthorizedUserNotFoundException(String s) {
+        super(s);
+    }
 }

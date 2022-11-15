@@ -2,7 +2,7 @@
 CREATE TABLE advert
 (
     id     bigint        PRIMARY KEY,
-    users integer NOT NULL,
+    users bigint NOT NULL,
     image  varchar(32),
     price  integer NOT NULL,
     title  varchar(32)
@@ -20,11 +20,12 @@ CREATE TABLE adscomment
 --Создание таблицы Пользователи
 CREATE TABLE users
 (
-    id     integer PRIMARY KEY,
-    email  varchar(32),
+    id     bigint PRIMARY KEY,
+    email      varchar(32),
     firstName  varchar(32),
     lastName   varchar(32),
-    phone      varchar(32)
+    phone      varchar(32),
+    role       varchar(32)
 );
 --Создание таблицы Картинки
 CREATE TABLE image
