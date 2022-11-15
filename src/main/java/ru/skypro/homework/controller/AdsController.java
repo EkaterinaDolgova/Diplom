@@ -17,6 +17,7 @@ import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
 import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.AdsNotFoundException;
+import ru.skypro.homework.exception.AuthorizedUserNotFoundException;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
@@ -84,22 +85,24 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/search/{name}")
-    public ResponseEntity <ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите наименование объявления") @PathVariable String name, Authentication authentication) {
+    public ResponseEntity <ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите имя пользователя") @PathVariable String name, Authentication authentication) {
         //Поиск id из таблицы users по авторизованному имени пользователя
-        Optional
+        /* Optional
                 <Users> idUserFind= userService.getUsers().stream()
-                 .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst();
+                 .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst();*/
         //Получение id users
-        Long idUser = idUserFind.stream().findFirst().get().getId();
+        Long idUser =  userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(()->new AuthorizedUserNotFoundException("Ошибка 404: пользователь не найден")).getId();
         int i = idUser.intValue();
         //Проверяем есть ли у данного пользователя объявление
-         if (adsService.getAllAds().stream().anyMatch(advert -> advert.getUsers().equals((i)) == true))
+         if (adsService.getAllAds().stream().anyMatch(advert -> advert.getUsers().equals((i))))
          {
              List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
              return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
         }
-         //иначе нужно выкинуть ошибку 403
-         throw new AdsNotFoundException("403!");
+         else //иначе нужно выкинуть ошибку 403  403??? Почему? Мы просто не нашли объявления, что запрещено?
+         {throw new AdsNotFoundException("Ошибка 404: объявления не найдены");}
 
     }
 
