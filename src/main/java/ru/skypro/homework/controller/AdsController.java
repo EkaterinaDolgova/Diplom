@@ -25,6 +25,7 @@ import ru.skypro.homework.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -65,14 +66,14 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads")
-    public ResponseEntity <ResponseWrapperAdsDto> getAllAds() {
+    public ResponseEntity<ResponseWrapperAdsDto> getAllAds() {
         List<AdsDto> listAdsDto = adsService.getAllAds().stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
+        return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(), listAdsDto));
     }
+
     /**
      * Возвращает список объявлений по поиску наименования.
      */
-
     @Operation(
             summary = "Получить список объявлений по поиску наименования",
             responses = {
@@ -85,30 +86,15 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/search/{name}")
-    public ResponseEntity <ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите имя пользователя") @PathVariable String name, Authentication authentication) {
-        //Поиск id из таблицы users по авторизованному имени пользователя
-        /* Optional
-                <Users> idUserFind= userService.getUsers().stream()
-                 .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst();*/
-        //Получение id users
-        Long idUser =  userService.getUsers().stream()
-                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
-                .orElseThrow(()->new AuthorizedUserNotFoundException("Ошибка 404: пользователь не найден")).getId();
-        int i = idUser.intValue();
-        //Проверяем есть ли у данного пользователя объявление
-         if (adsService.getAllAds().stream().anyMatch(advert -> advert.getUsers().equals((i))))
-         {
-             List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
-             return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
-        }
-         else //иначе нужно выкинуть ошибку 403  403??? Почему? Мы просто не нашли объявления, что запрещено?
-         {throw new AdsNotFoundException("Ошибка 404: объявления не найдены");}
-
+    public ResponseEntity<ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите имя пользователя") @PathVariable String name, Authentication authentication) {
+            List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+            return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(), listAdsDto));
     }
 
     /**
      * Добавить объявления.
      */
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(
             summary = "Добавить объявления",
             responses = {
@@ -121,11 +107,11 @@ public class AdsController {
     )
     //Загружаем объявление и картинку
     @PostMapping("/ads")
-    public AdsDto addAds( @Valid @RequestPart(name = "properties") AdsDto ads,
-                          @RequestPart("image") MultipartFile file) throws Exception {
+    public AdsDto addAds(@Valid @RequestPart(name = "properties") AdsDto ads,
+                         @RequestPart("image") MultipartFile file) throws Exception {
         Advert advert = adsMapper.adsDTOtoAdvert(ads);
         adsService.addAds(advert);
-        imageService.uploadImage(advert,file);
+        imageService.uploadImage(advert, file);
         return adsMapper.toAdsDTO(advert);
     }
 
@@ -182,6 +168,7 @@ public class AdsController {
     /**
      * Создание комментариев по ad_pk .
      */
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(
             summary = "Создание комментариев по ad_pk",
             responses = {
@@ -195,15 +182,14 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads/{ad_pk}/comment")
     public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable String ad_pk,
-                                  @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto)
-    {
+                                        @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto) {
         return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto)));
     }
 
     /**
      * Удаление комментария по id .
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(
             summary = "Удаление комментария по id .",
             responses = {
@@ -224,6 +210,7 @@ public class AdsController {
     /**
      * Поиск комментария по id .
      */
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(
             summary = "Поиск комментария по id .",
             responses = {
@@ -237,7 +224,7 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment/{id}")
     public String getAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                                       @Parameter(description = "") @PathVariable Integer id) {
+                                @Parameter(description = "") @PathVariable Integer id) {
 
 /*
         Comment comment = adsService. .getAdsComments(ad_pk); // !!!
@@ -251,7 +238,7 @@ public class AdsController {
     /**
      * Изменение комментария по id .
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(
             summary = "Изменение комментария по id .",
             responses = {
@@ -265,7 +252,7 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{ad_pk}/comment/{id}")
     public String updateAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                                          @Parameter(description = "") @PathVariable Integer id) {
+                                   @Parameter(description = "") @PathVariable Integer id) {
         //ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
 //        return ResponseEntity.ok(adsCommentMapper.toCommentDTO())
         return adsService.updateAdsComment(ad_pk, id);
@@ -274,7 +261,7 @@ public class AdsController {
     /**
      * Удаление объявление по id .
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(
             summary = "Удаление объявление по id.",
             responses = {
@@ -287,14 +274,29 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @DeleteMapping("/ads/{id}")
-    public ResponseEntity removeAds(@Parameter(description = "id объявления") @PathVariable Long id) {
-        adsService.removeAds(id);
-        return ResponseEntity.ok().body(HttpStatus.OK);
+    public ResponseEntity removeAds(@Parameter(description = "id объявления") @PathVariable Long id, Authentication authentication) {
+        Long idUser = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getId();
+        int i = idUser.intValue();
+        //Проверяем есть ли у данного пользователя объявления и записываем их в лист
+        Set<Long> idAdvert = adsService.getAllAds().stream().
+                filter(advert -> advert.getUsers().equals((i))).
+                map(advert -> advert.getId()).collect(Collectors.toSet());
+        System.out.println(idAdvert);
+        //Если выбранное объявление создано пользователем, то можно удалять
+        if (idAdvert.contains(id)) {
+            adsService.removeAds(id);
+            return ResponseEntity.ok().body(HttpStatus.OK);
+        } else {
+            throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
+        }
     }
 
     /**
      * Поиск объявление по id .
      */
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(
             summary = "Поиск объявление по id.",
             responses = {
@@ -315,11 +317,11 @@ public class AdsController {
     /**
      * Изменение объявление по id .
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(
             summary = "Изменение объявление по id.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
+                    @ApiResponse(responseCode = "200", description = "Изменение комментария успешно"),
                     @ApiResponse(responseCode = "201", description = "Созданный"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
                     @ApiResponse(responseCode = "403", description = "Запрещенно"),
@@ -328,9 +330,24 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{id}")
-    public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
+    public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id,Authentication authentication) throws Exception  {
+        Long idUser1 = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getId();
+        int i = idUser1.intValue();
+        //Проверяем есть ли у данного пользователя объявления и записываем их в лист
+        Set<Long> idAdvert1 = adsService.getAllAds().stream().
+                filter(advert -> advert.getUsers().equals((i))).
+                map(advert -> advert.getId()).collect(Collectors.toSet());
+        System.out.println(idAdvert1);
+        //Если выбранное объявление создано пользователем, то можно удалять
+        if (idAdvert1.contains(id)) {
         return adsMapper.toAdsDTO(adsService.updateAds(id));
+        } else {
+            throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
+        }
     }
+
     @Operation(
             summary = "Обновить картинки объявлений",
             responses = {
@@ -342,8 +359,22 @@ public class AdsController {
             }
     )
     @PatchMapping(value = "ads/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestParam MultipartFile image) throws Exception {
+    public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestParam MultipartFile image,Authentication authentication) throws Exception {
+        Long idUser1 = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getId();
+        int i = idUser1.intValue();
+        //Проверяем есть ли у данного пользователя объявления и записываем их в лист
+        Set<Long> idAdvert1 = adsService.getAllAds().stream().
+                filter(advert -> advert.getUsers().equals((i))).
+                map(advert -> advert.getId()).collect(Collectors.toSet());
+        System.out.println(idAdvert1);
+        //Если выбранное объявление создано пользователем, то можно удалять
+        if (idAdvert1.contains(id)) {
         imageService.updateImage(id, image);
         return ResponseEntity.ok().build();
+        } else {
+            throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
+        }
     }
 }
