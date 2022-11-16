@@ -10,7 +10,7 @@ import java.util.Objects;
 /**Класс Отзыв*/
 
 @Entity
-@Table(name = "adscomment")
+@Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

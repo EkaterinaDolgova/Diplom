@@ -203,8 +203,26 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @DeleteMapping("/ads/{ad_pk}/comment/{id}")
     public void deleteAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                 @Parameter(description = "") @PathVariable Integer id) {
+                                 @Parameter(description = "") @PathVariable Integer id,
+                                 Authentication authentication) {
+        Long idUser = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getId();
+        String userRole = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getRole();
+        int i = idUser.intValue();
+        //Проверяем есть ли у данного пользователя комментарии и записываем их в лист
+        Set<Long> idComment = adsService.getAdsComments(ad_pk).stream().
+                filter(comment -> comment.getUsers().equals((i))).
+                map(comment -> comment.getId()).collect(Collectors.toSet());
+        System.out.println(idComment);
+        //Если выбраный комментарий создан пользователем, то можно удалять
+        if (idComment.contains(id) || userRole.equals("ADMIN")) {
         adsService.deleteAdsComment(ad_pk, id);
+        } else {
+            throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данный комментарий!");
+        }
     }
 
     /**
@@ -252,10 +270,26 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{ad_pk}/comment/{id}")
     public String updateAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                   @Parameter(description = "") @PathVariable Integer id) {
-        //ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
-//        return ResponseEntity.ok(adsCommentMapper.toCommentDTO())
+                                   @Parameter(description = "") @PathVariable Integer id,
+                                   Authentication authentication) {
+        Long idUser = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getId();
+        String userRole = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getRole();
+        int i = idUser.intValue();
+        //Проверяем есть ли у данного пользователя комментарии и записываем их в лист
+        Set<Long> idComment = adsService.getAdsComments(ad_pk).stream().
+                filter(comment -> comment.getUsers().equals((i))).
+                map(comment -> comment.getId()).collect(Collectors.toSet());
+        System.out.println(idComment);
+        //Если выбраный комментарий создан пользователем, то можно удалять
+        if (idComment.contains(id) || userRole.equals("ADMIN")) {
         return adsService.updateAdsComment(ad_pk, id);
+        } else {
+            throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данный комментарий!");
+        }
     }
 
     /**
@@ -278,6 +312,9 @@ public class AdsController {
         Long idUser = userService.getUsers().stream()
                 .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
                 .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getId();
+        String userRole = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getRole();
         int i = idUser.intValue();
         //Проверяем есть ли у данного пользователя объявления и записываем их в лист
         Set<Long> idAdvert = adsService.getAllAds().stream().
@@ -285,11 +322,11 @@ public class AdsController {
                 map(advert -> advert.getId()).collect(Collectors.toSet());
         System.out.println(idAdvert);
         //Если выбранное объявление создано пользователем, то можно удалять
-        if (idAdvert.contains(id)) {
+        if (idAdvert.contains(id) || userRole.equals("ADMIN")) {
             adsService.removeAds(id);
             return ResponseEntity.ok().body(HttpStatus.OK);
         } else {
-            throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
+            throw new AdsNotFoundException("Ошибка 403: Вы не можете удалять данное объявление!");
         }
     }
 
@@ -330,10 +367,13 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{id}")
-    public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id,Authentication authentication) throws Exception  {
+    public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id,Authentication authentication,Role role) throws Exception  {
         Long idUser1 = userService.getUsers().stream()
-                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                    .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
                 .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getId();
+        String userRole = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getRole();
         int i = idUser1.intValue();
         //Проверяем есть ли у данного пользователя объявления и записываем их в лист
         Set<Long> idAdvert1 = adsService.getAllAds().stream().
@@ -341,7 +381,7 @@ public class AdsController {
                 map(advert -> advert.getId()).collect(Collectors.toSet());
         System.out.println(idAdvert1);
         //Если выбранное объявление создано пользователем, то можно удалять
-        if (idAdvert1.contains(id)) {
+        if (idAdvert1.contains(id) || userRole.equals("ADMIN")) {
         return adsMapper.toAdsDTO(adsService.updateAds(id));
         } else {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
@@ -363,6 +403,9 @@ public class AdsController {
         Long idUser1 = userService.getUsers().stream()
                 .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
                 .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getId();
+        String userRole = userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getRole();
         int i = idUser1.intValue();
         //Проверяем есть ли у данного пользователя объявления и записываем их в лист
         Set<Long> idAdvert1 = adsService.getAllAds().stream().
@@ -370,7 +413,7 @@ public class AdsController {
                 map(advert -> advert.getId()).collect(Collectors.toSet());
         System.out.println(idAdvert1);
         //Если выбранное объявление создано пользователем, то можно удалять
-        if (idAdvert1.contains(id)) {
+        if (idAdvert1.contains(id) || userRole.equals("ADMIN")) {
         imageService.updateImage(id, image);
         return ResponseEntity.ok().build();
         } else {

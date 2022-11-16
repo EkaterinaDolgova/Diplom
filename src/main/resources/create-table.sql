@@ -9,11 +9,11 @@ CREATE TABLE advert
 );
 
 --Создание таблицы Объявление комментарии
-CREATE TABLE adscomment
+CREATE TABLE comment
 (
     id     bigint PRIMARY KEY,
     users integer NOT NULL,
-    createdat  varchar(32),
+    createdate  varchar(32),
     text  varchar(32)
 );
 
