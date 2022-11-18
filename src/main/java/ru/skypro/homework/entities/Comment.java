@@ -7,7 +7,9 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 
 
-/**Класс Отзыв*/
+/**
+ * Класс Отзыв
+ */
 
 @Entity
 @Table(name = "adscomment")
@@ -26,6 +28,14 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "advert_id")
     private Advert advert;
+
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
+    }
+
+    public Advert getAdvert(){
+        return this.advert;
+    }
 
     public Comment(Long id, Integer users, OffsetDateTime createdAt, String text) {
         this.id = id;

@@ -89,7 +89,6 @@ public class ImageService {
         return imageRepository.findByAdvertId(advert_id).orElse(new Image());
     }
 
-
     private String getExtension(String fileName) {
         logger.info("Info getExtensions");
         return fileName.substring(fileName.lastIndexOf(".") + 1);

@@ -65,10 +65,11 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads")
-    public ResponseEntity <ResponseWrapperAdsDto> getAllAds() {
+    public ResponseEntity<ResponseWrapperAdsDto> getAllAds() {
         List<AdsDto> listAdsDto = adsService.getAllAds().stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
+        return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(), listAdsDto));
     }
+
     /**
      * Возвращает список объявлений по поиску наименования.
      */
@@ -85,24 +86,24 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/search/{name}")
-    public ResponseEntity <ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите имя пользователя") @PathVariable String name, Authentication authentication) {
+    public ResponseEntity<ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите имя пользователя") @PathVariable String name, Authentication authentication) {
         //Поиск id из таблицы users по авторизованному имени пользователя
         /* Optional
                 <Users> idUserFind= userService.getUsers().stream()
                  .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst();*/
         //Получение id users
-        Long idUser =  userService.getUsers().stream()
+        Long idUser = userService.getUsers().stream()
                 .filter(user -> user.getFirstName().equals(authentication.getName())).findFirst()
-                .orElseThrow(()->new AuthorizedUserNotFoundException("Ошибка 404: пользователь не найден")).getId();
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 404: пользователь не найден")).getId();
         int i = idUser.intValue();
         //Проверяем есть ли у данного пользователя объявление
-         if (adsService.getAllAds().stream().anyMatch(advert -> advert.getUsers().equals((i))))
-         {
-             List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
-             return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(),listAdsDto));
+        if (adsService.getAllAds().stream().anyMatch(advert -> advert.getUsers().equals((i)))) {
+            List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+            return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(), listAdsDto));
+        } else //иначе нужно выкинуть ошибку 403  403??? Почему? Мы просто не нашли объявления, что запрещено?
+        {
+            throw new AdsNotFoundException("Ошибка 404: объявления не найдены");
         }
-         else //иначе нужно выкинуть ошибку 403  403??? Почему? Мы просто не нашли объявления, что запрещено?
-         {throw new AdsNotFoundException("Ошибка 404: объявления не найдены");}
 
     }
 
@@ -121,11 +122,11 @@ public class AdsController {
     )
     //Загружаем объявление и картинку
     @PostMapping("/ads")
-    public AdsDto addAds( @Valid @RequestPart(name = "properties") AdsDto ads,
-                          @RequestPart("image") MultipartFile file) throws Exception {
+    public AdsDto addAds(@Valid @RequestPart(name = "properties") AdsDto ads,
+                         @RequestPart("image") MultipartFile file) throws Exception {
         Advert advert = adsMapper.adsDTOtoAdvert(ads);
         adsService.addAds(advert);
-        imageService.uploadImage(advert,file);
+        imageService.uploadImage(advert, file);
         return adsMapper.toAdsDTO(advert);
     }
 
@@ -173,8 +174,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment")
-    public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable String ad_pk) {
-        List<Comment> commentList = adsService.getAdsComments(ad_pk); // !!!
+    public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk) {
+        List<Comment> commentList = adsService.getAdsComments(ad_pk);
         List<AdsCommentDto> adsCommentDtoList = commentList.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsCommentDto(adsCommentDtoList.size(), adsCommentDtoList));
     }
@@ -195,8 +196,7 @@ public class AdsController {
     @CrossOrigin(value = "http://localhost:3000")
     @PostMapping("/ads/{ad_pk}/comment")
     public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable String ad_pk,
-                                  @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto)
-    {
+                                        @Parameter(description = "") @PathVariable AdsCommentDto adsCommentDto) {
         return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto)));
     }
 
@@ -216,7 +216,7 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @DeleteMapping("/ads/{ad_pk}/comment/{id}")
-    public void deleteAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
+    public void deleteAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk,
                                  @Parameter(description = "") @PathVariable Integer id) {
         adsService.deleteAdsComment(ad_pk, id);
     }
@@ -236,8 +236,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment/{id}")
-    public String getAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                                       @Parameter(description = "") @PathVariable Integer id) {
+    public Comment getAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk,
+                                 @Parameter(description = "") @PathVariable Integer id) {
 
 /*
         Comment comment = adsService. .getAdsComments(ad_pk); // !!!
@@ -264,11 +264,12 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{ad_pk}/comment/{id}")
-    public String updateAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                                          @Parameter(description = "") @PathVariable Integer id) {
+    public Comment updateAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk,
+                                    @Parameter(description = "") @PathVariable Integer id,
+                                    @RequestBody Comment comment) {
         //ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
 //        return ResponseEntity.ok(adsCommentMapper.toCommentDTO())
-        return adsService.updateAdsComment(ad_pk, id);
+        return adsService.updateAdsComment(ad_pk, id, comment);
     }
 
     /**
@@ -331,6 +332,7 @@ public class AdsController {
     public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         return adsMapper.toAdsDTO(adsService.updateAds(id));
     }
+
     @Operation(
             summary = "Обновить картинки объявлений",
             responses = {

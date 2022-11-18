@@ -36,6 +36,14 @@ public class Advert {
     @JsonIgnore
     private Collection<Comment> comment;
 
+    public Collection<Comment> getComment() {
+        return comment;
+    }
+
+    public void setComment(Collection<Comment> comment) {
+        this.comment = comment;
+    }
+
     public Advert() {
 
     }

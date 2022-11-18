@@ -24,6 +24,6 @@ public interface AdsRepository extends JpaRepository<Advert, Long> {
         return null;
     }
 
-    @Query(value = "Select * from advert where title like '%'||:name||'%'  ORDER BY id DESC  LIMIT 5 ", nativeQuery = true)
+//    @Query(value = "Select * from advert where title like '%'||:name||'%'  ORDER BY id DESC  LIMIT 5 ", nativeQuery = true)
     List<Advert> getAllAdsNameS(String name) ;
 }

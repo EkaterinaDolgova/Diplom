@@ -6,8 +6,13 @@ import ru.skypro.homework.entities.Comment;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> getCommentById(String id);
-//    Comment getByUser (String name);
+    Comment getCommentById(Integer id);
+
+    Comment getCommentByIdAndAdvertId (Integer ad_pk, Integer id );
+
+    Comment deleteCommentByIdAndAdvert_Id (Integer ad_pk, Integer id );
+
+    List<Comment> getCommentsByAdvert_Id(Integer ad_pk);
 
     default String getAllAds() {
         return null;

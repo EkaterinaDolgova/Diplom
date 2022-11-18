@@ -6,9 +6,11 @@ import ru.skypro.homework.dto.ResponseWrapperUserDto;
 import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.entities.Users;
 
+import java.util.Optional;
+
 public interface UserRepository extends JpaRepository<Users, Long> {
 
-    Users getById(Long id);
+    Users getUsersById(Long id);
     Users getByFirstName(String firstName);
     Users getByLastName(String lastName);
     Users getByPhone(String Phone);
