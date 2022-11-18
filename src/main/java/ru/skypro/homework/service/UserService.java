@@ -43,7 +43,14 @@ public class UserService {
 
     public Users getUser(Long id){
         logger.info("Info getUser");
-        return userRepository.getById(id);
+        return userRepository.getUsersById(id);
     }
+
+    public Users addUser(Users users){
+        logger.info("Info gaddUser");
+        return userRepository.save(users);
+    }
+
+
 
 }

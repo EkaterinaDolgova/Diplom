@@ -34,7 +34,7 @@ CREATE TABLE image
     filePath  varchar(32),
     fileSize  bigint,
     mediaType   varchar(32),
-    data      oid
+    "data"      oid
 );
 
 

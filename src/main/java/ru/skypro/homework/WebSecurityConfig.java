@@ -43,8 +43,7 @@ public class WebSecurityConfig {
                                 .mvcMatchers("/ads/**", "/users/**").authenticated()
                                 //Доступ разрешен всем пользователям
                                 .mvcMatchers("/", "/ads").permitAll()
-                                .mvcMatchers("/ads").hasRole("USER")
-
+                                .mvcMatchers("/ads/**").hasRole("USER")
                 )
                 .cors().disable()
                 .httpBasic(withDefaults());

@@ -74,6 +74,7 @@ public class AdsController {
     /**
      * Возвращает список объявлений по поиску наименования.
      */
+
     @Operation(
             summary = "Получить список объявлений по поиску наименования",
             responses = {
@@ -159,8 +160,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment")
-    public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable String ad_pk) {
-        List<Comment> commentList = adsService.getAdsComments(ad_pk); // !!!
+    public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk) {
+        List<Comment> commentList = adsService.getAdsComments(ad_pk);
         List<AdsCommentDto> adsCommentDtoList = commentList.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsCommentDto(adsCommentDtoList.size(), adsCommentDtoList));
     }
@@ -219,11 +220,10 @@ public class AdsController {
         System.out.println(idComment);
         //Если выбраный комментарий создан пользователем, то можно удалять
         if (idComment.contains(id) || userRole.equals("ADMIN")) {
-        adsService.deleteAdsComment(ad_pk, id);
+
         } else {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данный комментарий!");
         }
-    }
 
     /**
      * Поиск комментария по id .
@@ -241,8 +241,8 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @GetMapping("/ads/{ad_pk}/comment/{id}")
-    public String getAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
-                                @Parameter(description = "") @PathVariable Integer id) {
+    public Comment getAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk,
+                                 @Parameter(description = "") @PathVariable Integer id) {
 
 /*
         Comment comment = adsService. .getAdsComments(ad_pk); // !!!
@@ -269,6 +269,12 @@ public class AdsController {
     )
     @CrossOrigin(value = "http://localhost:3000")
     @PatchMapping("/ads/{ad_pk}/comment/{id}")
+    public Comment updateAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk,
+                                    @Parameter(description = "") @PathVariable Integer id,
+                                    @RequestBody Comment comment) {
+        //ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
+//        return ResponseEntity.ok(adsCommentMapper.toCommentDTO())
+        return adsService.updateAdsComment(ad_pk, id, comment);
     public String updateAdsComment(@Parameter(description = "") @PathVariable String ad_pk,
                                    @Parameter(description = "") @PathVariable Integer id,
                                    Authentication authentication) {
@@ -387,7 +393,6 @@ public class AdsController {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
         }
     }
-
     @Operation(
             summary = "Обновить картинки объявлений",
             responses = {
