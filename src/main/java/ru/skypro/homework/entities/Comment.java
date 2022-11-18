@@ -1,8 +1,5 @@
 package ru.skypro.homework.entities;
-
-import lombok.Data;
-
-import javax.persistence.*;
+import  javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 

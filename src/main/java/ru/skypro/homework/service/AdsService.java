@@ -5,11 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
+import ru.skypro.homework.exception.AuthorizedUserNotFoundException;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.CommentRepository;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,15 +20,17 @@ public class AdsService {
 
     private final AdsRepository adsRepository;
     private final CommentRepository commentRepository;
+    private final UserService userService;
 
     /**
      * Возвращает все записи объявления.
      *
      * @return список записей объявления.
      */
-    public AdsService(AdsRepository adsRepository, CommentRepository commentRepository) {
+    public AdsService(AdsRepository adsRepository, CommentRepository commentRepository, UserService userService) {
         this.adsRepository = adsRepository;
         this.commentRepository = commentRepository;
+        this.userService = userService;
     }
 
     /*Отсортированы в алфавитном порядке по названию*/
@@ -34,14 +38,12 @@ public class AdsService {
         logger.info("Info getAllAds - Все объявления");
         return adsRepository.findAll().stream().sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
-
     /*Список объявлений отсортирован по авторам*/
     public List<Advert> getAllAdsName(String name) {
         logger.info("Info getAllAds - Все объявления по наименованию");
         return adsRepository.getAllAdsNameS(name).stream()
                 .sorted(Comparator.comparing(Advert::getUsers)).collect(Collectors.toList());
     }
-
     public Advert addAds(Advert advert) {
         logger.info("Info addAds Запись объявления");
         adsRepository.save(advert);
@@ -60,14 +62,14 @@ public class AdsService {
         //.stream().sorted(Comparator.comparing(Comment::getCreatedAt).reversed()).collect(Collectors.toList());
     }
 
-    public String addAdsComments(Integer ad_pk) {
+    public String addAdsComments(String ad_pk) {
         logger.info("Info addAdsComments");
         return "OK";
     }
 
     public void deleteAdsComment(Integer ad_pk, Integer id) {
         logger.info("Info deleteAdsComment");
-        commentRepository.deleteCommentByIdAndAdvert_Id(ad_pk, id);
+        commentRepository.deleteById(Long.valueOf(id));
     }
 
     public Comment getAdsComment(Integer ad_pk, Integer id) {
@@ -112,6 +114,35 @@ public class AdsService {
         logger.info("Info addComment");
         // ad_pk !!!
         return commentRepository.save(comment);
+    }
+
+    public Long findIdUser(String author) {
+        logger.info("Info findIdUser Поиск id пользователя по имени авторизованного пользователя");
+        return userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(author)).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден"))
+                .getId();
+    }
+
+    public String findIdUserRole(String author) {
+        logger.info("Info findIdUserRole Поиск роли по имени авторизованного пользователя");
+        return userService.getUsers().stream()
+                .filter(user -> user.getFirstName().equals(author)).findFirst()
+                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getRole();
+    }
+
+    public Set<Long> findAdvertIdUser(Integer iduser) {
+        logger.info("Info findAdvertIdUser Поиск объявления у пользователя");
+        return adsRepository.findAll().stream().
+                filter(advert -> advert.getUsers().equals((iduser))).
+                map(advert -> advert.getId()).collect(Collectors.toSet());
+    }
+
+    public Set<Long> findIdComment(Integer iduser) {
+        logger.info("Info findIdComment Поиск  id комментария пользователя");
+        return commentRepository.findAll().stream().
+                filter(comment -> comment.getUsers().equals((iduser))).
+                map(comment -> comment.getId()).collect(Collectors.toSet());
     }
 
 }

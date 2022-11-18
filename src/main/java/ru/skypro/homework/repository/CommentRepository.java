@@ -20,5 +20,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     default String addAds() {
         return null;
     }
+    void deleteById(Long id);
 
 }
