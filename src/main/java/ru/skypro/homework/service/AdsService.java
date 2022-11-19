@@ -38,23 +38,23 @@ public class AdsService {
         logger.info("Info getAllAds - Все объявления");
         return adsRepository.findAll().stream().sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
+
     /*Список объявлений отсортирован по авторам*/
     public List<Advert> getAllAdsName(String name) {
         logger.info("Info getAllAds - Все объявления по наименованию");
-        return adsRepository.getAllAdsNameS(name).stream()
+        List<Advert> adverts = adsRepository.getAllAdsNameS(name)
+                .stream()
+                .filter(s->s.getTitle().contains((name)))
                 .sorted(Comparator.comparing(Advert::getUsers)).collect(Collectors.toList());
+        return adverts;
     }
+
     public Advert addAds(Advert advert) {
         logger.info("Info addAds Запись объявления");
         adsRepository.save(advert);
         return advert;
     }
 
-    /* public <object> String getAdsMe(Advert.authenticated authenticated, String authority, object credentials, object details, object principal) {
-         logger.info("Info getAdsMe");
-         return "OK";
-
-     }*/
     /*Список комментариев отсортирован по дате добавления, начиная с самого позднего*/
     public List<Comment> getAdsComments(Integer ad_pk) {
         logger.info("Info getAdsComments"); // !!!
@@ -62,7 +62,7 @@ public class AdsService {
         //.stream().sorted(Comparator.comparing(Comment::getCreatedAt).reversed()).collect(Collectors.toList());
     }
 
-    public String addAdsComments(String ad_pk) {
+    public String addAdsComments(Integer ad_pk) {
         logger.info("Info addAdsComments");
         return "OK";
     }
@@ -110,9 +110,11 @@ public class AdsService {
                 .sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
 
-    public Comment addComment(String ad_pk, Comment comment) {
+    public Comment addComment(Integer ad_pk, Comment comment) {
         logger.info("Info addComment");
-        // ad_pk !!!
+        // Проверить работу
+        Advert advert = adsRepository.getAdvertById(ad_pk);
+        comment.setAdvert(advert);
         return commentRepository.save(comment);
     }
 
