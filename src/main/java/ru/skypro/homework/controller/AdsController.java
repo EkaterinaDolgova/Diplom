@@ -211,7 +211,7 @@ public class AdsController {
     @Operation(summary = "Изменение объявление по id.", responses = {@ApiResponse(responseCode = "200", description = "Изменение комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенно"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PatchMapping("/ads/{id}")
     public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id,
-                            @Parameter(description = "") @PathVariable AdsDto adsDto,
+                            @Parameter(description = "") @RequestBody AdsDto adsDto,
                             Authentication authentication) throws Exception {
         Long idUser1 = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());

@@ -101,7 +101,7 @@ public class AdsService {
         Advert advert_ = adsRepository.findAdvertById(id);
         advert_.setTitle(advert.getTitle());
         advert_.setPrice(advert.getPrice());
-        return advert_;
+        return adsRepository.save(advert_);
     }
 
     /* Объявления одного пользователя отсортированы по названию в алфавитном порядке*/
