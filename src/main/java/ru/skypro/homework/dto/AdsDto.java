@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
+import ru.skypro.homework.entities.Image;
 
 import java.util.Objects;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-@Builder
+//@Builder
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
 

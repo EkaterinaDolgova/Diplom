@@ -1,14 +1,23 @@
 package ru.skypro.homework.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 
 /**Класс Объявление*/
 @Entity
+@Getter
+@Setter
 @Table(name = "advert")
+@AllArgsConstructor
 public class Advert {
 
-   public enum authenticated {
+
+    public enum authenticated {
         TRUE,
         FALSE
     }
@@ -17,20 +26,27 @@ public class Advert {
     @Column(name = "id", nullable = false)
     private Long id;
     private Integer users;
+   // @OneToOne
     private String image;
     private Integer price;
     private String title;
 
-    public Advert(Integer users, String image, Integer price, String title) {
-        this.users = users;
-        this.image = image;
-        this.price = price;
-        this.title = title;
+    @OneToMany
+    @JoinColumn(name = "comment_id")
+    @JsonIgnore
+    private Collection<Comment> comment;
+
+    public Collection<Comment> getComment() {
+        return comment;
     }
+
+    public void setComment(Collection<Comment> comment) {
+        this.comment = comment;
+    }
+
     public Advert() {
 
     }
-
 
     public String getTitle() {
         return title;
@@ -52,16 +68,8 @@ public class Advert {
         return image;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public Integer getUsers() {
         return users;
-    }
-
-    public void setUsers(Integer users) {
-        this.users = users;
     }
 
     public Long getId() {
@@ -95,4 +103,6 @@ public class Advert {
                 ", Наименование='" + title + '\'' +
                 '}';
     }
+
+
 }

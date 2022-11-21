@@ -1,16 +1,15 @@
 package ru.skypro.homework.entities;
-
-import lombok.Data;
-
-import javax.persistence.*;
+import  javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
 
-/**Класс Отзыв*/
+/**
+ * Класс Отзыв
+ */
 
 @Entity
-@Table(name = "adscomment")
+@Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +21,18 @@ public class Comment {
     private OffsetDateTime createdAt;
     @Column(name = "text")
     private String text;
+
+    @ManyToOne
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
+
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
+    }
+
+    public Advert getAdvert(){
+        return this.advert;
+    }
 
     public Comment(Long id, Integer users, OffsetDateTime createdAt, String text) {
         this.id = id;
