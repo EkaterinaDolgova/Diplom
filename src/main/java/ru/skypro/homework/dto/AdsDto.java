@@ -24,7 +24,7 @@ public class AdsDto {
     private Integer author = null;
 
     @JsonProperty("image")
-    private Image image = null;
+    private String image = null;
 
     @JsonProperty("pk")
     private Integer pk = null;
@@ -50,7 +50,7 @@ public class AdsDto {
         this.author = author;
     }
 
-    public AdsDto image(Image image) {
+    public AdsDto image(String image) {
         this.image = image;
         return this;
     }
@@ -61,11 +61,11 @@ public class AdsDto {
      **/
     @Schema(description = "")
 
-    public Image getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

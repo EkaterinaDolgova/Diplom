@@ -22,6 +22,7 @@ public class AdsService {
     private final CommentRepository commentRepository;
     private final UserService userService;
 
+
     /**
      * Возвращает все записи объявления.
      *
@@ -42,11 +43,9 @@ public class AdsService {
     /*Список объявлений отсортирован по авторам*/
     public List<Advert> getAllAdsName(String name) {
         logger.info("Info getAllAds - Все объявления по наименованию");
-        List<Advert> adverts = adsRepository.getAllAdsNameS(name)
-                .stream()
-                .filter(s->s.getTitle().contains((name)))
+        List<Advert> adverts1 = adsRepository.findAdsByTitleContaining(name).stream()
                 .sorted(Comparator.comparing(Advert::getUsers)).collect(Collectors.toList());
-        return adverts;
+        return adverts1;
     }
 
     public Advert addAds(Advert advert) {
@@ -57,9 +56,8 @@ public class AdsService {
 
     /*Список комментариев отсортирован по дате добавления, начиная с самого позднего*/
     public List<Comment> getAdsComments(Integer ad_pk) {
-        logger.info("Info getAdsComments"); // !!!
-        return commentRepository.getCommentsByAdvert_Id(ad_pk);
-        //.stream().sorted(Comparator.comparing(Comment::getCreatedAt).reversed()).collect(Collectors.toList());
+        logger.info("Info getAdsComments");
+        return commentRepository.findCommentsByAdvert(adsRepository.findById(Long.valueOf(ad_pk)).get());
     }
 
     public String addAdsComments(Integer ad_pk) {
@@ -98,9 +96,12 @@ public class AdsService {
         return adsRepository.getById(id);
     }
 
-    public Advert updateAds(Long id) {
+    public Advert updateAds(Long id, Advert advert) {
         logger.info("Info updateAds");
-        return adsRepository.getById(id);
+        Advert advert_ = adsRepository.findAdvertById(id);
+        advert_.setTitle(advert.getTitle());
+        advert_.setPrice(advert.getPrice());
+        return advert_;
     }
 
     /* Объявления одного пользователя отсортированы по названию в алфавитном порядке*/
@@ -112,18 +113,10 @@ public class AdsService {
 
     public Comment addComment(Integer ad_pk, Comment comment) {
         logger.info("Info addComment");
-        // Проверить работу
-        Advert advert = adsRepository.getAdvertById(ad_pk);
+        Advert advert = adsRepository.findAdvertById(Long.valueOf(ad_pk));
+        System.out.println(advert);
         comment.setAdvert(advert);
         return commentRepository.save(comment);
-    }
-
-    public Long findIdUser(String author) {
-        logger.info("Info findIdUser Поиск id пользователя по имени авторизованного пользователя");
-        return userService.getUsers().stream()
-                .filter(user -> user.getFirstName().equals(author)).findFirst()
-                .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден"))
-                .getId();
     }
 
     public String findIdUserRole(String author) {

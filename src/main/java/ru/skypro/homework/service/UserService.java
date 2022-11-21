@@ -7,6 +7,7 @@ import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapperUserDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.exception.AuthorizedUserNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -49,6 +50,12 @@ public class UserService {
     public Users addUser(Users users){
         logger.info("Info gaddUser");
         return userRepository.save(users);
+    }
+
+    public Long findIdUser(String author) {
+        logger.info("Info findIdUser Поиск id пользователя по имени авторизованного пользователя");
+         List<Users> users = userRepository.findUsersByFirstName(author);
+         return users.stream().findFirst().get().getId();
     }
 
 

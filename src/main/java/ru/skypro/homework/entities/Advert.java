@@ -26,8 +26,8 @@ public class Advert {
     @Column(name = "id", nullable = false)
     private Long id;
     private Integer users;
-    @OneToOne
-    private Image image;
+   // @OneToOne
+    private String image;
     private Integer price;
     private String title;
 
@@ -64,7 +64,7 @@ public class Advert {
         this.price = price;
     }
 
-    public Image getImage() {
+    public String getImage() {
         return image;
     }
 

@@ -10,7 +10,7 @@ public interface AdsRepository extends JpaRepository<Advert, Long> {
 
     Advert getById(Long id);
 
-    Advert getAdvertById (Integer id);
+    Advert findAdvertById(Long id);
 
     List<Advert> getAdvertsByUsers(Integer id);
 
@@ -23,7 +23,7 @@ public interface AdsRepository extends JpaRepository<Advert, Long> {
     }
 
     // @Query(value = "Select * from advert where title like '%'||:name||'%'  ORDER BY id DESC  LIMIT 5 ", nativeQuery = true)
-    List<Advert> getAllAdsNameS(String name) ;
+    List<Advert> findAdsByTitleContaining(String name) ;
 
 
 }

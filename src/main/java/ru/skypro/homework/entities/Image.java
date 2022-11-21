@@ -14,7 +14,6 @@ public class Image {
     private String mediaType;
     @Lob
     private byte[] data;
-
     @OneToOne
     private Advert advert;
 
