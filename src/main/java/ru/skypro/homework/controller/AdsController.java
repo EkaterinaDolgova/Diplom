@@ -68,7 +68,7 @@ public class AdsController {
     @Operation(summary = "Получить список объявлений по поиску наименования", responses = {@ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/ads/search/{name}")
     public ResponseEntity<ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите наименование объявления") @PathVariable String name,
-                                                                Authentication authentication) {
+                                                               Authentication authentication) {
         List<AdsDto> listAdsDto = adsService.getAllAdsName(name).stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(), listAdsDto));
     }
@@ -93,12 +93,11 @@ public class AdsController {
      */
     @Operation(summary = "Получить список объявлений по параметрам", responses = {@ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/ads/me")
-    public <object> ResponseEntity<ResponseWrapperAdsDto> getAdsMe(@Parameter(description = "") @PathVariable Advert.authenticated authenticated, @Parameter(description = "") @PathVariable String authority, @Parameter(description = "") @PathVariable object credentials, @Parameter(description = "") @PathVariable object details, @Parameter(description = "") @PathVariable object principal) {
-        Integer idUser = 1; // Get User = Me !!!
+    public <object> ResponseEntity<ResponseWrapperAdsDto> getAdsMe(@Parameter(description = "") @PathVariable Advert.authenticated authenticated, @Parameter(description = "") @PathVariable String authority, @Parameter(description = "") @PathVariable object credentials, @Parameter(description = "") @PathVariable object details, @Parameter(description = "") @PathVariable object principal, @PathVariable Authentication authentication) {
+        Integer idUser = (userService.findIdUser(authentication.getName())).intValue();
         List<Advert> adsList = adsService.getAdvertsByUserId(idUser);
         List<AdsDto> adsDtoList = adsList.stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsDto(adsDtoList.size(), adsDtoList));
-
     }
 
     /**
@@ -221,7 +220,7 @@ public class AdsController {
         Set<Long> idAdvert1 = adsService.findAdvertIdUser(i);
         //Если выбранное объявление создано пользователем, то можно редактировать
         if (idAdvert1.contains(id) || userRole.equals("ADMIN")) {
-            return adsMapper.toAdsDTO(adsService.updateAds(id,adsMapper.adsDTOtoAdvert(adsDto)));
+            return adsMapper.toAdsDTO(adsService.updateAds(id, adsMapper.adsDTOtoAdvert(adsDto)));
         } else {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
         }
