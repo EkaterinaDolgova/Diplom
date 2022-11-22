@@ -1,5 +1,7 @@
 package ru.skypro.homework.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -15,6 +17,8 @@ public class Image {
     @Lob
     private byte[] data;
     @OneToOne
+    @JoinColumn(name = "advert_id")
+    @JsonIgnore
     private Advert advert;
 
     public Long getId() {

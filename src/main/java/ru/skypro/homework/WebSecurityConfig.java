@@ -35,10 +35,6 @@ public class WebSecurityConfig {
                 .build();
         return new InMemoryUserDetailsManager(user);
     }
-   /* @Bean
-    public JdbcUserDetailsManager userDetailsService(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
-    }*/
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
