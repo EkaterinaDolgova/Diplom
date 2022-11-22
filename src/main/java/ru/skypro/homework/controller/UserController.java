@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.service.UserService;
 
@@ -115,8 +116,11 @@ public class UserController {
     )
     @PostMapping("/users/add")
     public ResponseEntity<UserDto> addUsers(@Parameter(description = "") @PathVariable UserDto userDto) {
-        Users users = userService.addUser(userMapper.userDtoFromUsers(userDto));
+        Users users = userMapper.userDtoFromUsers(userDto);
+        userService.addUser(users);
+           //     userService.addUser(userMapper.userDtoFromUsers(userDto));
         return ResponseEntity.ok(userMapper.toUserDTO(users));
+
     }
 
     /**

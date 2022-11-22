@@ -11,7 +11,7 @@ public interface AdsRepository extends JpaRepository<Advert, Long> {
 
     Advert findAdvertById(Long id);
 
-    List<Advert> getAdvertsByUsers(Integer id);
+    List<Advert> findAdvertByUsers(Long id);
 
     void deleteById(Long id);
 

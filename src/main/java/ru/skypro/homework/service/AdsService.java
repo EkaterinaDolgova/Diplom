@@ -106,9 +106,9 @@ public class AdsService {
     }
 
     /* Объявления одного пользователя отсортированы по названию в алфавитном порядке*/
-    public List<Advert> getAdvertsByUserId(Integer id) {
+    public List<Advert> getAdvertsByUserId(Long id) {
         logger.info("Info getAdsMe");
-        return adsRepository.getAdvertsByUsers(id).stream()
+        return adsRepository.findAdvertByUsers(Long.valueOf(id)).stream()
                 .sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
 

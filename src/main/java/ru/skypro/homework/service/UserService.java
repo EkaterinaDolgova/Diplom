@@ -48,8 +48,9 @@ public class UserService {
     }
 
     public Users addUser(Users users){
-        logger.info("Info gaddUser");
+        logger.info("Info addUser Добавить пользователя");
         return userRepository.save(users);
+
     }
 
     public Long findIdUser(String author) {

@@ -93,9 +93,16 @@ public class AdsController {
      */
     @Operation(summary = "Получить список объявлений по параметрам", responses = {@ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/ads/me")
-    public <object> ResponseEntity<ResponseWrapperAdsDto> getAdsMe(@Parameter(description = "") @PathVariable Advert.authenticated authenticated, @Parameter(description = "") @PathVariable String authority, @Parameter(description = "") @PathVariable object credentials, @Parameter(description = "") @PathVariable object details, @Parameter(description = "") @PathVariable object principal, @PathVariable Authentication authentication) {
-        Integer idUser = (userService.findIdUser(authentication.getName())).intValue();
+    public <object> ResponseEntity<ResponseWrapperAdsDto> getAdsMe(@Parameter(description = "") @PathVariable Advert.authenticated authenticated,
+                                                                   @Parameter(description = "") @PathVariable String authority,
+                                                                   @Parameter(description = "") @PathVariable object credentials,
+                                                                   @Parameter(description = "") @PathVariable object details,
+                                                                   @Parameter(description = "") @PathVariable object principal,
+                                                                   Authentication authentication) {
+        Long idUser = userService.findIdUser(authentication.getName());
+        System.out.println(idUser);
         List<Advert> adsList = adsService.getAdvertsByUserId(idUser);
+        System.out.println(adsList);
         List<AdsDto> adsDtoList = adsList.stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsDto(adsDtoList.size(), adsDtoList));
     }

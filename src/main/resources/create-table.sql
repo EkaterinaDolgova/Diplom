@@ -25,7 +25,10 @@ CREATE TABLE users
     firstName  varchar(32),
     lastName   varchar(32),
     phone      varchar(32),
-    role       varchar(32)
+    role       varchar(32),
+    username varchar(50) not null,
+    password varchar(500) not null,
+    enabled boolean not null
 );
 --Создание таблицы Картинки
 CREATE TABLE image
@@ -36,6 +39,18 @@ CREATE TABLE image
     mediaType   varchar(32),
     "data"      oid
 );
+
+create table users(
+                      username varchar(50) not null primary key,
+                      password varchar(500) not null,
+                      enabled boolean not null
+);
+
+create table authorities (
+                             username varchar(50) not null,
+                             authority varchar(50) not null
+);
+create unique index ix_auth_username on authorities (username,authority);
 
 
 
