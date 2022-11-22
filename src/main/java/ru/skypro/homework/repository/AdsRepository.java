@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface AdsRepository extends JpaRepository<Advert, Long> {
 
-    Advert getById(Long id);
 
     Advert findAdvertById(Long id);
 

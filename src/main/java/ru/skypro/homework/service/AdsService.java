@@ -71,19 +71,20 @@ public class AdsService {
     }
 
     public Comment getAdsComment(Integer ad_pk, Integer id) {
-        logger.info("Info getAdsComment");
-        return commentRepository.getCommentByIdAndAdvertId(ad_pk, id);
+        logger.info("Info getAdsComment Поиск комментария по ad_pk/id");
+        return commentRepository.findCommentsByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).get(),Long.valueOf(id));
     }
 
     public Comment updateAdsComment(Integer ad_pk, Integer id, Comment comment_new) {
-        logger.info("Info updateAdsComment");
-        Comment comment = commentRepository.getCommentByIdAndAdvertId(ad_pk, id);
+        logger.info("Info updateAdsComment Изменение Комментария у объявления");
+       Comment comment = commentRepository.findCommentsByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).get(), Long.valueOf(id));
         comment.setId(comment_new.getId());
         comment.setText(comment_new.getText());
         comment.setCreatedAt(comment_new.getCreatedAt());
         comment.setText(comment_new.getText());
         comment.setAdvert(comment_new.getAdvert());
         return commentRepository.save(comment);
+
     }
 
     public void removeAds(Long id) {
@@ -93,7 +94,7 @@ public class AdsService {
 
     public Advert getAds(Long id) {
         logger.info("Info Список объявлений по id");
-        return adsRepository.getById(id);
+        return adsRepository.findAdvertById(id);
     }
 
     public Advert updateAds(Long id, Advert advert) {
