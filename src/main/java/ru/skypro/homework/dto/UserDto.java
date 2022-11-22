@@ -29,6 +29,18 @@ public class UserDto {
     @JsonProperty("phone")
     private String phone = null;
 
+    @JsonProperty("role")
+    private String role= null;
+
+    @JsonProperty("username")
+    private String username= null;
+
+    @JsonProperty("password")
+    private String password= null;
+
+    @JsonProperty("enabled")
+    private Boolean enabled= null;
+
     public UserDto email(String email) {
         this.email = email;
         return this;

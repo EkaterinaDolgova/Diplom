@@ -43,8 +43,8 @@ public class AdsService {
     /*Список объявлений отсортирован по авторам*/
     public List<Advert> getAllAdsName(String name) {
         logger.info("Info getAllAds - Все объявления по наименованию");
-        List<Advert> adverts1 = adsRepository.findAdsByTitleContaining(name).stream()
-                .sorted(Comparator.comparing(Advert::getUsers)).collect(Collectors.toList());
+        List<Advert> adverts1 = adsRepository.findAdsByTitleContaining(name);
+               // .sorted(Comparator.comparing(Advert::getUsers)).collect(Collectors.toList());
         return adverts1;
     }
 

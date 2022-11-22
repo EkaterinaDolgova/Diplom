@@ -1,6 +1,7 @@
 package ru.skypro.homework.entities;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**Класс Пользователей*/
 @Entity
@@ -15,14 +16,14 @@ public class Users {
     private String lastName;
     private String phone;
     private String role;
-
     private String username;
-
     private String password;
-
     private Boolean enabled;
+    @OneToMany
+    @JoinColumn(name = "advert_id")
+    private Collection<Advert> advert;
 
-    public Users(String email, String firstName, String lastName, String phone, Long id, String role, String username, String password, Boolean enabled) {
+    public Users(String email, String firstName, String lastName, String phone, Long id, String role) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;

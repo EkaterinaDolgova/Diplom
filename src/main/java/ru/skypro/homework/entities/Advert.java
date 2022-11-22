@@ -1,22 +1,22 @@
 package ru.skypro.homework.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 
-/**Класс Объявление*/
+/**
+ * Класс Объявление
+ */
 @Entity
 @Getter
 @Setter
 @Table(name = "advert")
-@AllArgsConstructor
+//@AllArgsConstructor
 public class Advert {
-
-
     public enum authenticated {
         TRUE,
         FALSE
@@ -25,19 +25,47 @@ public class Advert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
     private Integer users;
-   // @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "usersCollection_id")
+    @JsonIgnore
+    private Users usersCollection;
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    @JsonIgnore
+    private Image imageI;
     private String image;
     private Integer price;
     private String title;
+
 
     @OneToMany
     @JoinColumn(name = "comment_id")
     @JsonIgnore
     private Collection<Comment> comment;
 
+    public Advert(Long id, Integer users, Users usersCollection, String image, Integer price, String title, Collection<Comment> comment) {
+        this.id = id;
+        this.users = users;
+        this.usersCollection = usersCollection;
+        this.image = image;
+        this.price = price;
+        this.title = title;
+        this.comment = comment;
+    }
     public Collection<Comment> getComment() {
         return comment;
+    }
+
+
+    public void setUsers(Integer users) {
+        this.users = users;
+    }
+
+    public Integer getUsers() {
+        return users;
     }
 
     public void setComment(Collection<Comment> comment) {
@@ -60,16 +88,16 @@ public class Advert {
         return price;
     }
 
+    public Users getUsersCollection() {
+        return usersCollection;
+    }
+
     public void setPrice(Integer price) {
         this.price = price;
     }
 
     public String getImage() {
         return image;
-    }
-
-    public Integer getUsers() {
-        return users;
     }
 
     public Long getId() {
