@@ -108,14 +108,14 @@ public class AdsService {
     /* Объявления одного пользователя отсортированы по названию в алфавитном порядке*/
     public List<Advert> getAdvertsByUserId(Long id) {
         logger.info("Info getAdsMe");
-        return adsRepository.findAdvertByUsers(Long.valueOf(id)).stream()
+        return adsRepository.findAdvertByUsers(id).stream()
                 .sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
 
     public Comment addComment(Integer ad_pk, Comment comment) {
         logger.info("Info addComment");
         Advert advert = adsRepository.findAdvertById(Long.valueOf(ad_pk));
-        System.out.println(advert);
+        logger.info("Advert", advert);
         comment.setAdvert(advert);
         return commentRepository.save(comment);
     }

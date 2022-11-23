@@ -15,14 +15,14 @@ public interface AdsRepository extends JpaRepository<Advert, Long> {
 
     void deleteById(Long id);
 
-    Advert getByTitleLikeIgnoreCase(String title);
+    Advert findByTitleLikeIgnoreCase(String title);
 
     default String addAds() {
         return null;
     }
 
     // @Query(value = "Select * from advert where title like '%'||:name||'%'  ORDER BY id DESC  LIMIT 5 ", nativeQuery = true)
-    List<Advert> findAdsByTitleContaining(String name) ;
+    List<Advert> findAdsByTitleContaining(String title) ;
 
 
 }

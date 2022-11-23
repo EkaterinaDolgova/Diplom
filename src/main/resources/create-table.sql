@@ -1,5 +1,5 @@
 --Создание таблицы Объявлений
-CREATE TABLE advert
+CREATE TABLE IF NOT EXISTS advert
 (
     id     bigint        PRIMARY KEY,
     users bigint NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE advert
 );
 
 --Создание таблицы Объявление комментарии
-CREATE TABLE comment
+CREATE TABLE IF NOT EXISTS comment
 (
     id     bigint PRIMARY KEY,
     users integer NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE comment
 );
 
 --Создание таблицы Пользователи
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     id     bigint PRIMARY KEY,
     email      varchar(32),
@@ -31,7 +31,7 @@ CREATE TABLE users
     enabled boolean not null
 );
 --Создание таблицы Картинки
-CREATE TABLE image
+CREATE TABLE IF NOT EXISTS image
 (
     id     bigint PRIMARY KEY,
     filePath  varchar(32),
@@ -40,16 +40,11 @@ CREATE TABLE image
     "data"      oid
 );
 
-create table users(
-                      username varchar(50) not null primary key,
-                      password varchar(500) not null,
-                      enabled boolean not null
+CREATE TABLE IF NOT EXISTS authorities (
+      username varchar(50) not null,
+      authority varchar(50) not null
 );
 
-create table authorities (
-                             username varchar(50) not null,
-                             authority varchar(50) not null
-);
 create unique index ix_auth_username on authorities (username,authority);
 
 

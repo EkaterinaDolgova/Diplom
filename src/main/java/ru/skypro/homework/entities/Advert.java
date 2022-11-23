@@ -17,10 +17,12 @@ import java.util.Objects;
 @Table(name = "advert")
 //@AllArgsConstructor
 public class Advert {
+/*
     public enum authenticated {
         TRUE,
         FALSE
     }
+*/
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -36,21 +38,20 @@ public class Advert {
     @JoinColumn(name = "image_id")
     @JsonIgnore
     private Image imageI;
-    private String image;
+//    private String image;
     private Integer price;
     private String title;
-
 
     @OneToMany
     @JoinColumn(name = "comment_id")
     @JsonIgnore
     private Collection<Comment> comment;
 
-    public Advert(Long id, Integer users, Users usersCollection, String image, Integer price, String title, Collection<Comment> comment) {
+    public Advert(Long id, Integer users, Users usersCollection, /*String image,*/ Integer price, String title, Collection<Comment> comment) {
         this.id = id;
         this.users = users;
         this.usersCollection = usersCollection;
-        this.image = image;
+//        this.image = image;
         this.price = price;
         this.title = title;
         this.comment = comment;
@@ -96,9 +97,11 @@ public class Advert {
         this.price = price;
     }
 
+/*
     public String getImage() {
         return image;
     }
+*/
 
     public Long getId() {
         return id;
@@ -113,12 +116,12 @@ public class Advert {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Advert advert = (Advert) o;
-        return Objects.equals(id, advert.id) && Objects.equals(users, advert.users) && Objects.equals(image, advert.image) && Objects.equals(price, advert.price) && Objects.equals(title, advert.title);
+        return Objects.equals(id, advert.id) && Objects.equals(users, advert.users) /*&& Objects.equals(image, advert.image)*/ && Objects.equals(price, advert.price) && Objects.equals(title, advert.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, users, image, price, title);
+        return Objects.hash(id, users, /*image,*/ price, title);
     }
 
     @Override
@@ -126,7 +129,7 @@ public class Advert {
         return "Advert{" +
                 "id=" + id +
                 ", Пользователь=" + users +
-                ", Картинка='" + image + '\'' +
+/*                ", Картинка='" + image + '\'' +*/
                 ", Цена=" + price +
                 ", Наименование='" + title + '\'' +
                 '}';
