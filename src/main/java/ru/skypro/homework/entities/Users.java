@@ -23,18 +23,6 @@ public class Users {
     @JoinColumn(name = "advert_id")
     private Collection<Advert> advert;
 
-    public Users(String email, String firstName, String lastName, String phone, Long id, String role) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.id = id;
-        this.role = role;
-        this.username = username;
-        this.password = password;
-        this.enabled = enabled;
-    }
-
     public Users() {
     }
 
@@ -109,12 +97,5 @@ public class Users {
         this.password = password;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
 }
 

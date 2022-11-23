@@ -44,7 +44,7 @@ public class UserService {
 
     public Users getUser(Long id){
         logger.info("Info getUser");
-        return userRepository.getUsersById(id);
+        return userRepository.findUsersById(id);
     }
 
     public Users addUser(Users users){
@@ -55,7 +55,7 @@ public class UserService {
 
     public Long findIdUser(String author) {
         logger.info("Info findIdUser Поиск id пользователя по имени авторизованного пользователя");
-         List<Users> users = userRepository.findUsersByFirstName(author);
+         List<Users> users = userRepository.findUsersByUsername(author);
          return users.stream().findFirst().get().getId();
     }
 

@@ -14,7 +14,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findCommentsByAdvert(Advert advert);
 
-    default String getAllAds() {
+    default String AllAds() {
         return null;
     }
     default String addAds() {
