@@ -32,12 +32,32 @@ public class ImageService {
         this.imageRepository = imageRepository;
         this.adsRepository = adsRepository;
     }
+
+
     /**
      * Загружаем картинки.
      *
      * @return загрузка картинок.
      */
-   public void uploadImage(Advert ads, MultipartFile file) throws Exception {
+
+    public String uploadImage(Advert ads, MultipartFile file) {
+        byte[] imageContent;
+        Image image = new Image();
+        try {
+            //imageContent = getImageContent(file);
+            byte[] bytes = file.getBytes();
+            image.setData(bytes);
+        } catch (IOException e) {
+            throw new AdsNotFoundException("не найдено");
+        }
+        image.setAdvert(ads);
+        image.setFileSize(file.getSize());
+        image.setMediaType(file.getContentType());
+        imageRepository.save(image);
+        return imageRepository.save(image).getId().toString();
+    }
+
+/*    public void uploadImage1(Advert ads, MultipartFile file) throws Exception {
        logger.info("Вызван метод uploadImage");
        Path pathFile = Path.of(imagesDir, ads.getTitle() + "." + getExtension(file.getOriginalFilename()));
        Files.createDirectories(pathFile.getParent());
@@ -56,7 +76,7 @@ public class ImageService {
        image.setMediaType(file.getContentType());
        image.setData(file.getBytes());
        imageRepository.save(image);
-    }
+    }*/
     /**
      * Обновляем картинки.
      *

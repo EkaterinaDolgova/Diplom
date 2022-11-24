@@ -20,15 +20,16 @@ CREATE TABLE IF NOT EXISTS comment --Создание таблицы Объяв�
 
 CREATE TABLE IF NOT EXISTS users -- Создание таблицы Пользователи
 (
-    id     bigint PRIMARY KEY,
+    id     bigserial PRIMARY KEY,
     email      varchar(32),
     firstName  varchar(32),
     lastName   varchar(32),
     phone      varchar(32),
     role       varchar(32),
-    username varchar(50) not null,
+    username varchar(50) not null unique ,
     password varchar(500) not null,
     enabled boolean not null
+
     );
 
 CREATE TABLE IF NOT EXISTS image -- --Создание таблицы Картинки
@@ -42,7 +43,10 @@ CREATE TABLE IF NOT EXISTS image -- --Создание таблицы Карти
 
 CREATE TABLE IF NOT EXISTS authorities (
     username varchar(50) not null,
-    authority varchar(50) not null
+    authority varchar(50) not null,
+    FOREIGN KEY (username)
+    REFERENCES users (username)
     );
 
 create unique index IF NOT EXISTS ix_auth_username on authorities (username,authority);
+

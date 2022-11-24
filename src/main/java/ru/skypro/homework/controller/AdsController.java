@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
+import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.AdsService;
@@ -56,16 +57,17 @@ public class AdsController {
     /**
      * Возвращает список объявлений.
      */
+    @GetMapping("/search-all/")
     @Operation(summary = "Получить список объявлений", responses = {@ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     public ResponseEntity<ResponseWrapperAdsDto> getAllAds() {
         List<AdsDto> listAdsDto = adsService.getAllAds().stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+        System.out.println(listAdsDto);
         return ResponseEntity.ok(new ResponseWrapperAdsDto(listAdsDto.size(), listAdsDto));
     }
 
     /**
      * Возвращает список объявлений по поиску наименования.
      */
-
     @Operation(summary = "Получить список объявлений по поиску наименования", responses = {@ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/search/{name}")
     public ResponseEntity<ResponseWrapperAdsDto> getAllAdsName(@Parameter(description = "Введите наименование объявления") @PathVariable String name,
@@ -78,15 +80,24 @@ public class AdsController {
      * Добавить объявления.
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    @Operation(summary = "Добавить объявления", responses = {@ApiResponse(responseCode = "200", description = "Объявление успешно создано"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    //Загружаем объявление и картинку
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    //@PostMapping( "/ads")
-    public AdsDto addAds(@RequestPart(name = "properties") AdsDto ads, @RequestPart("image") MultipartFile file) throws Exception {
-        Advert advert = adsMapper.adsDTOtoAdvert(ads);
-        adsService.addAds(advert);
-        imageService.uploadImage(advert, file);
-        return adsMapper.toAdsDTO(advert);
+@PostMapping(consumes = {"multipart/form-data"})
+public ResponseEntity<AdsDto> addAds(
+        Authentication authentication,
+        @RequestPart("properties") CreateAdsDto createAdsDto,
+        @Parameter(description = "Изображение")
+        @RequestPart("image") MultipartFile file
+) {
+        Long idUser = userService.findIdUser(authentication.getName());
+        System.out.println(idUser);
+        Advert advert = adsMapper.advertTOCreateAdsDto(createAdsDto);
+        advert.setUsers(idUser.intValue());
+        Advert adsCreated = adsService.addAds(advert);
+
+        String imageId = imageService.uploadImage(adsCreated, file);
+        AdsDto adsDto = adsMapper.createAdsDtoTOAdvert(adsCreated);
+        adsDto.setImage("/ads/image/" + imageId);
+
+        return ResponseEntity.ok(adsDto);
     }
 
     /**
@@ -162,7 +173,7 @@ public class AdsController {
     }
 
     /**
-     * Возвращает список объявлений.
+     * Возвращает список объявлений пользователя.
      */
     @Operation(summary = "Получить список объявлений по параметрам", responses = {@ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/me")

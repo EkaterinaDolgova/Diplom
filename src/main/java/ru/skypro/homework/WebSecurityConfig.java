@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
@@ -19,43 +20,31 @@ import javax.sql.DataSource;
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.H2;
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig {
 
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
-            "/swagger-resources/**",
+            "/swagger-resources/",
             "/swagger-ui.html",
             "/v3/api-docs",
-            "/webjars/**",
-            "/login", "/register"
+            "/webjars/",
+            "/login", "/register", "/ads/**"
     };
 
     @Bean
-    DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(H2)
-                .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
+    public JdbcUserDetailsManager userDetailsManager(DataSource dataSource) {
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin@gmail.com")
+                .password("password")
+                .roles("ADMIN", "USER")
                 .build();
-    }
 
-    @Bean
-    UserDetailsManager users(DataSource dataSource) {
-/*        UserDetails user = User.builder()
-                .username("user")
-                .password("123")
-                .roles("USER")
-                .build();
-/*
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password("321")
-                .roles("USER", "ADMIN")
-                .build();
-*/
         JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
-//        users.createUser(user);
-//        users.createUser(admin);
+        if (!users.userExists(admin.getUsername())) {
+            users.createUser(admin);
+        }
+
         return users;
     }
 
@@ -66,12 +55,11 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authz) ->
                         authz
                                 .mvcMatchers(AUTH_WHITELIST).permitAll()
-                                .mvcMatchers("/ads/**", "/users/**").authenticated()
-
+                                .mvcMatchers("/ads/**", "/users/**").hasAnyRole("ADMIN", "USER")
                 )
-                .cors().and()
+                .cors(withDefaults())
                 .httpBasic(withDefaults());
+
         return http.build();
     }
 }
-

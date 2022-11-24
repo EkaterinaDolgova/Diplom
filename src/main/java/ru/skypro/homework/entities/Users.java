@@ -8,14 +8,15 @@ import java.util.Collection;
 @Table(name = "users")
 public class Users {
     @Id
+    @Column(columnDefinition = "bigserial")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
     private String email;
     private String firstName;
     private String lastName;
     private String phone;
     private String role;
+
     private String username;
     private String password;
     private Boolean enabled;

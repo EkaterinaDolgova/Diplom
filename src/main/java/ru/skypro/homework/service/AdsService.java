@@ -37,7 +37,9 @@ public class AdsService {
     /*Отсортированы в алфавитном порядке по названию*/
     public List<Advert> getAllAds() {
         logger.info("Info getAllAds - Все объявления");
-        return adsRepository.findAll().stream().sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
+        System.out.println(adsRepository.findAll());
+        return adsRepository.findAll();
+                //.stream().sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
 
     /*Список объявлений отсортирован по авторам*/

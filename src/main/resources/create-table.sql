@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS comment
 --Создание таблицы Пользователи
 CREATE TABLE IF NOT EXISTS users
 (
-    id     bigint PRIMARY KEY,
+    id     bigserial PRIMARY KEY,
     email      varchar(32),
     firstName  varchar(32),
     lastName   varchar(32),
@@ -45,7 +45,8 @@ CREATE TABLE IF NOT EXISTS authorities (
       authority varchar(50) not null
 );
 
-create unique index ix_auth_username on authorities (username,authority);
+Select * from advert;
+
 
 
 

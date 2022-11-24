@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface AdsRepository extends JpaRepository<Advert, Long> {
 
-
     Advert findAdvertById(Long id);
 
     List<Advert> findAdvertByUsers(Long id);
@@ -23,6 +22,6 @@ public interface AdsRepository extends JpaRepository<Advert, Long> {
 
     // @Query(value = "Select * from advert where title like '%'||:name||'%'  ORDER BY id DESC  LIMIT 5 ", nativeQuery = true)
     List<Advert> findAdsByTitleContaining(String title) ;
-
+    List<Advert> findAll() ;
 
 }

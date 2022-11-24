@@ -38,7 +38,7 @@ public class Advert {
     @JoinColumn(name = "image_id")
     @JsonIgnore
     private Image imageI;
-//    private String image;
+    private String image;
     private Integer price;
     private String title;
 
@@ -51,7 +51,7 @@ public class Advert {
         this.id = id;
         this.users = users;
         this.usersCollection = usersCollection;
-//        this.image = image;
+       this.image = image;
         this.price = price;
         this.title = title;
         this.comment = comment;
@@ -97,11 +97,11 @@ public class Advert {
         this.price = price;
     }
 
-/*
+
     public String getImage() {
         return image;
     }
-*/
+
 
     public Long getId() {
         return id;
