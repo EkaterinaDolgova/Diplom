@@ -50,3 +50,20 @@ CREATE TABLE IF NOT EXISTS authorities (
 
 create unique index IF NOT EXISTS ix_auth_username on authorities (username,authority);
 
+-- changeset bakulin:2
+
+ALTER TABLE image DROP COLUMN file_path
+
+-- changeset bakulin:3
+ALTER TABLE image DROP COLUMN file_size
+
+-- changeset bakulin:4
+ALTER TABLE image DROP COLUMN media_type
+
+--changeset bakulin:6
+ALTER TABLE image DROP COLUMN advert_id
+
+--changeset bakulin:7
+ALTER TABLE image DROP COLUMN data
+
+

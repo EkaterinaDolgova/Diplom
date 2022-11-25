@@ -80,7 +80,8 @@ public class AdsController {
      * Добавить объявления.
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    @PostMapping(consumes = {"multipart/form-data"})
+    //@PostMapping(consumes = {"multipart/form-data"})
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<AdsDto> addAds(
             Authentication authentication,
             @RequestPart("properties") CreateAdsDto createAdsDto,

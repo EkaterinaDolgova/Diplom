@@ -19,8 +19,6 @@ import static com.datical.liquibase.ext.init.InitProjectUtil.getExtension;
 @Service
 public class ImageService {
     Logger logger = LoggerFactory.getLogger(ImageService.class);
-    @Value("images")
-    private String imagesDir;
     private final ImageRepository imageRepository;
     private final AdsRepository adsRepository;
 
