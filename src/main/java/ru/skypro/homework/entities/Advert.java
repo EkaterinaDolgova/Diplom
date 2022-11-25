@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -34,14 +35,13 @@ public class Advert {
     @JsonIgnore
     private Users usersCollection;
 
-    @OneToOne
-    @JoinColumn(name = "image_id")
+
     @JsonIgnore
-    private Image imageI;
-    private String image;
+    @OneToMany(mappedBy = "advert", fetch = FetchType.EAGER)
+    private List<Image> images;
+
     private Integer price;
     private String title;
-
     @OneToMany
     @JoinColumn(name = "comment_id")
     @JsonIgnore
@@ -51,15 +51,32 @@ public class Advert {
         this.id = id;
         this.users = users;
         this.usersCollection = usersCollection;
-       this.image = image;
+        this.images = images;
         this.price = price;
         this.title = title;
         this.comment = comment;
     }
+
+    public Advert() {
+
+    }
+
+    public void setUsersCollection(Users usersCollection) {
+        this.usersCollection = usersCollection;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+
     public Collection<Comment> getComment() {
         return comment;
     }
-
 
     public void setUsers(Integer users) {
         this.users = users;
@@ -71,10 +88,6 @@ public class Advert {
 
     public void setComment(Collection<Comment> comment) {
         this.comment = comment;
-    }
-
-    public Advert() {
-
     }
 
     public String getTitle() {
@@ -96,12 +109,6 @@ public class Advert {
     public void setPrice(Integer price) {
         this.price = price;
     }
-
-
-    public String getImage() {
-        return image;
-    }
-
 
     public Long getId() {
         return id;
@@ -134,6 +141,8 @@ public class Advert {
                 ", Наименование='" + title + '\'' +
                 '}';
     }
-
+    public Image getLastImage() {
+        return ((images == null) || (images.size()) == 0) ? null : images.get(images.size() - 1);
+    }
 
 }

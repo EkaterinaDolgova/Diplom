@@ -34,17 +34,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JdbcUserDetailsManager userDetailsManager(DataSource dataSource) {
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("admin@gmail.com")
-                .password("password")
-                .roles("ADMIN", "USER")
-                .build();
-
         JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
-        if (!users.userExists(admin.getUsername())) {
-            users.createUser(admin);
-        }
-
         return users;
     }
 
@@ -56,6 +46,8 @@ public class WebSecurityConfig {
                         authz
                                 .mvcMatchers(AUTH_WHITELIST).permitAll()
                                 .mvcMatchers("/ads/**", "/users/**").hasAnyRole("ADMIN", "USER")
+                                //разрешить всем
+                            //    .mvcMatchers("/ads/**", "/users/**").permitAll()
                 )
                 .cors(withDefaults())
                 .httpBasic(withDefaults());

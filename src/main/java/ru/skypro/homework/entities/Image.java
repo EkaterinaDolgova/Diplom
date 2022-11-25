@@ -1,25 +1,28 @@
 package ru.skypro.homework.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
 @Table(name = "image")
+@DynamicInsert
 public class Image {
     @Id
-    @GeneratedValue
+    @Column(columnDefinition = "bigserial")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String filePath;
-    private Long fileSize;
-    private String mediaType;
-    @Lob
-    private byte[] data;
-    @OneToOne
-    @JoinColumn(name = "advert_id")
-    @JsonIgnore
+
+    @ManyToOne
+    @JoinColumn(name = "id_ads")
     private Advert advert;
+
+    private byte[] image;
+
+    public Image() {
+    }
 
     public Long getId() {
         return id;
@@ -29,65 +32,34 @@ public class Image {
         this.id = id;
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public Long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(Long fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    @Override
-    public String toString() {
-        return "Image{" +
-                "id=" + id +
-                ", filePath='" + filePath + '\'' +
-                ", fileSize='" + fileSize + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Image image = (Image) o;
-        return id.equals(image.id) && filePath.equals(image.filePath) && fileSize.equals(image.fileSize);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, filePath, fileSize);
-    }
-
     public Advert getAdvert() {
         return advert;
     }
 
-    public void setAdvert(Advert advert) {
-        this.advert= advert;
+    public void setAdvert(Advert ads) {
+        this.advert = advert;
     }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "AdsImageEntity{" +
+                "id=" + id +
+                ", ads=" + advert +
+                ", image=" + Arrays.toString(image) +
+                '}';
+    }
+
 }

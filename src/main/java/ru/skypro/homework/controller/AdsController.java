@@ -80,21 +80,22 @@ public class AdsController {
      * Добавить объявления.
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-@PostMapping(consumes = {"multipart/form-data"})
-public ResponseEntity<AdsDto> addAds(
-        Authentication authentication,
-        @RequestPart("properties") CreateAdsDto createAdsDto,
-        @Parameter(description = "Изображение")
-        @RequestPart("image") MultipartFile file
-) {
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<AdsDto> addAds(
+            Authentication authentication,
+            @RequestPart("properties") CreateAdsDto createAdsDto,
+            @Parameter(description = "Изображение")
+            @RequestPart("image") MultipartFile file
+    ) {
+        System.out.println(authentication.getName());
         Long idUser = userService.findIdUser(authentication.getName());
         System.out.println(idUser);
-        Advert advert = adsMapper.advertTOCreateAdsDto(createAdsDto);
+        Advert advert = adsMapper.createAdsDtoToAds(createAdsDto);
         advert.setUsers(idUser.intValue());
         Advert adsCreated = adsService.addAds(advert);
 
         String imageId = imageService.uploadImage(adsCreated, file);
-        AdsDto adsDto = adsMapper.createAdsDtoTOAdvert(adsCreated);
+        AdsDto adsDto = adsMapper.toAdsDTO(adsCreated);
         adsDto.setImage("/ads/image/" + imageId);
 
         return ResponseEntity.ok(adsDto);
@@ -243,7 +244,7 @@ public ResponseEntity<AdsDto> addAds(
         }
     }
 
-    @Operation(summary = "Обновить картинки объявлений", responses = {@ApiResponse(responseCode = "200", description = "Картинки успешно загружена"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
+  /*  @Operation(summary = "Обновить картинки объявлений", responses = {@ApiResponse(responseCode = "200", description = "Картинки успешно загружена"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestParam MultipartFile image, Authentication authentication) throws Exception {
         Long idUser1 = userService.findIdUser(authentication.getName());
@@ -258,5 +259,5 @@ public ResponseEntity<AdsDto> addAds(
         } else {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
         }
-    }
+    }*/
 }

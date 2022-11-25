@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Service
 public class AdsService {
     Logger logger = LoggerFactory.getLogger(AdsService.class);
-
     private final AdsRepository adsRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;

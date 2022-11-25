@@ -10,15 +10,11 @@ import ru.skypro.homework.entities.Image;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.ImageRepository;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
-import static io.swagger.v3.core.util.AnnotationsUtils.getExtensions;
+import static com.datical.liquibase.ext.init.InitProjectUtil.getExtension;
 
 @Service
 public class ImageService {
@@ -32,87 +28,53 @@ public class ImageService {
         this.imageRepository = imageRepository;
         this.adsRepository = adsRepository;
     }
-
-
     /**
      * Загружаем картинки.
-     *
      * @return загрузка картинок.
      */
 
-    public String uploadImage(Advert ads, MultipartFile file) {
-        byte[] imageContent;
-        Image image = new Image();
-        try {
-            //imageContent = getImageContent(file);
-            byte[] bytes = file.getBytes();
-            image.setData(bytes);
-        } catch (IOException e) {
-            throw new AdsNotFoundException("не найдено");
+    public String uploadImage(Advert advert, MultipartFile file) {
+            byte[] imageContent;
+            try {
+                imageContent = getImageContent(file);
+            } catch (IOException e) {
+                throw new AdsNotFoundException("no");
+            }
+            Image image = new Image();
+            image.setAdvert(advert);
+            image.setImage(imageContent);
+
+            return imageRepository.save(image).getId().toString();
         }
-        image.setAdvert(ads);
-        image.setFileSize(file.getSize());
-        image.setMediaType(file.getContentType());
-        imageRepository.save(image);
-        return imageRepository.save(image).getId().toString();
-    }
 
-/*    public void uploadImage1(Advert ads, MultipartFile file) throws Exception {
-       logger.info("Вызван метод uploadImage");
-       Path pathFile = Path.of(imagesDir, ads.getTitle() + "." + getExtension(file.getOriginalFilename()));
-       Files.createDirectories(pathFile.getParent());
-       Files.deleteIfExists(pathFile);
+        /**
+         * Возвращает содержимое изображения.
+         * @return содержимое изображения.
+         */
+        private byte[] getImageContent(MultipartFile file) throws IOException {
+            String contentType = file.getContentType();
+            String fileNameOriginal = file.getOriginalFilename();
+            String ext = getExtension(fileNameOriginal);
 
-       try (InputStream is = file.getInputStream();
-            OutputStream out = Files.newOutputStream(pathFile, CREATE_NEW);
-            BufferedInputStream bis = new BufferedInputStream(is, 1024);
-            BufferedOutputStream bout = new BufferedOutputStream(out, 1024)) {
-           bis.transferTo(bout);
-       }
-       Image image = new Image();
-       image.setAdvert(ads);
-       image.setFilePath(pathFile.toString());
-       image.setFileSize(file.getSize());
-       image.setMediaType(file.getContentType());
-       image.setData(file.getBytes());
-       imageRepository.save(image);
-    }*/
-    /**
-     * Обновляем картинки.
-     *
-     * @return загрузка новой картинки.
-     */
-    public void updateImage (Long advertId, MultipartFile imageFile) throws IOException {
-        Advert advert = adsRepository.findById(advertId).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено"));
-        Path filePath = Path.of(imagesDir, advert.getId() + "." + getExtension(imageFile.getOriginalFilename()));
-        Files.createDirectories(filePath.getParent());
-        Files.deleteIfExists(filePath);
-        try (
-                InputStream is = imageFile.getInputStream();
-                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-                BufferedInputStream bis = new BufferedInputStream(is, 1024);
-                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
-        ) {
-            bis.transferTo(bos);
+            byte[] imageByte = file.getBytes();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayInputStream bais = new ByteArrayInputStream(imageByte);
+
+            BufferedImage imgIn = ImageIO.read(bais);
+            if (imgIn == null) {
+                return null;
+            }
+
+            double height = imgIn.getHeight() / (imgIn.getWidth() / 250d);
+            BufferedImage imgOut = new BufferedImage(250, (int) height, imgIn.getType());
+            Graphics2D graphics = imgOut.createGraphics();
+            graphics.drawImage((BufferedImage) imgIn, 0, 0, 250, (int) height, null);
+            graphics.dispose();
+
+            ImageIO.write(imgOut, ext, baos);
+
+            return baos.toByteArray();
         }
-        Image image = findAdvertImage(advertId);
-        image.setAdvert(advert);
-        image.setFilePath(filePath.toString());
-        image.setFileSize(imageFile.getSize());
-        image.setMediaType(imageFile.getContentType());
-        image.setData(imageFile.getBytes());
-        adsRepository.save(advert);
-        logger.info("Info updateImage");
-    }
-    public Image findAdvertImage(long advert_id) {
-        logger.info("Info findAdvertImage");
-        return imageRepository.findByAdvertId(advert_id).orElse(new Image());
-    }
-
-    private String getExtension(String fileName) {
-        logger.info("Info getExtensions");
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
-    }
 
 
 }
