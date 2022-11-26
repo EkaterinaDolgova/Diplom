@@ -5,13 +5,11 @@ import org.springframework.data.jpa.repository.Query;
 import ru.skypro.homework.entities.Advert;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AdsRepository extends JpaRepository<Advert, Long> {
-
-    Advert findAdvertById(Long id);
-    List<Advert> findAdvertByUsers(Long id);
-    Advert findByTitleLikeIgnoreCase(String title);
-    List<Advert> findAdsByTitleContaining(String title) ;
-    List<Advert> findAll() ;
+    Optional<Advert> findById(Long id);
+    Optional<List<Advert>> findByUsers(Long id);
+    List<Advert> findByTitleContaining(String title) ;
 
 }

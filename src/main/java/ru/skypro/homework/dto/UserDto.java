@@ -157,7 +157,65 @@ public class UserDto {
                 Objects.equals(this.lastName, user.lastName) &&
                 Objects.equals(this.phone, user.phone);
     }
+    /**
+     * Get username
+     *
+     * @return username
+     **/
+    @Schema(description = "")
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * Get role
+     *
+     * @return role
+     **/
+    @Schema(description = "")
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    /**
+     * Get password
+     *
+     * @return password
+     **/
+    @Schema(description = "")
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return enabled
+     **/
+    @Schema(description = "")
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(email, firstName, id, lastName, phone);

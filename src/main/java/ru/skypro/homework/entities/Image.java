@@ -1,13 +1,19 @@
 package ru.skypro.homework.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.Arrays;
-import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "image")
+@AllArgsConstructor
+
 @DynamicInsert
 public class Image {
     @Id
@@ -24,35 +30,6 @@ public class Image {
     public Image() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert ads) {
-        this.advert = advert;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
     @Override
     public String toString() {
         return "AdsImageEntity{" +
@@ -61,5 +38,4 @@ public class Image {
                 ", image=" + Arrays.toString(image) +
                 '}';
     }
-
 }

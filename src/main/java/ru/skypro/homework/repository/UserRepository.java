@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<Users, Long> {
 
-    Users findUsersById(Long id);
-    default ResponseWrapperUserDto getUsers() {
-        return null;
-    }
-    List<Users> findUsersByUsername(String username) ;
+    Optional <Users> findById(Long id);
+  //  default ResponseWrapperUserDto getUsers() {
+    //    return null;
+   // }
+    Optional <Users> findByUsername(String username) ;
 }

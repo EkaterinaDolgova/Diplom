@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS users -- Создание таблицы Пользо
     firstName  varchar(32),
     lastName   varchar(32),
     phone      varchar(32),
-    role       varchar(32),
     username varchar(50) not null unique ,
     password varchar(500) not null,
     enabled boolean not null
@@ -38,7 +37,7 @@ CREATE TABLE IF NOT EXISTS image -- --Создание таблицы Карти
     filePath  varchar(32),
     fileSize  bigint,
     mediaType   varchar(32),
-    "data"      DATE
+    "data"      oid
     );
 
 CREATE TABLE IF NOT EXISTS authorities (

@@ -5,9 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import ru.skypro.homework.entities.Advert;
-import ru.skypro.homework.entities.Image;
 
-//@Mapper(componentModel="spring")
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface AdsMapper {
     @Mapping(source = "id", target = "pk")

@@ -5,12 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
+import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.exception.AuthorizedUserNotFoundException;
+import ru.skypro.homework.exception.UsersNotFoundException;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.CommentRepository;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,19 +36,15 @@ public class AdsService {
         this.userService = userService;
     }
 
-    /*Отсортированы в алфавитном порядке по названию*/
     public List<Advert> getAllAds() {
         logger.info("Info getAllAds - Все объявления");
         System.out.println(adsRepository.findAll());
         return adsRepository.findAll();
-                //.stream().sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
     }
 
-    /*Список объявлений отсортирован по авторам*/
     public List<Advert> getAllAdsName(String name) {
         logger.info("Info getAllAds - Все объявления по наименованию");
-        List<Advert> adverts1 = adsRepository.findAdsByTitleContaining(name);
-               // .sorted(Comparator.comparing(Advert::getUsers)).collect(Collectors.toList());
+        List<Advert> adverts1 = adsRepository.findByTitleContaining(name);
         return adverts1;
     }
 
@@ -55,10 +54,9 @@ public class AdsService {
         return advert;
     }
 
-    /*Список комментариев отсортирован по дате добавления, начиная с самого позднего*/
-    public List<Comment> getAdsComments(Integer ad_pk) {
-        logger.info("Info getAdsComments");
-        return commentRepository.findCommentsByAdvert(adsRepository.findById(Long.valueOf(ad_pk)).get());
+    public Optional<Comment> getAdsComments(Integer ad_pk) {
+        logger.info("Info getAdsComments Список комментариев");
+        return commentRepository.findByAdvert(adsRepository.findById(Long.valueOf(ad_pk)).get());
     }
 
     public String addAdsComments(Integer ad_pk) {
@@ -66,19 +64,19 @@ public class AdsService {
         return "OK";
     }
 
-    public void deleteAdsComment(Integer ad_pk, Integer id) {
+    public void deleteAdsComment(Integer id) {
         logger.info("Info deleteAdsComment");
         commentRepository.deleteById(Long.valueOf(id));
     }
 
     public Comment getAdsComment(Integer ad_pk, Integer id) {
         logger.info("Info getAdsComment Поиск комментария по ad_pk/id");
-        return commentRepository.findCommentsByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).get(),Long.valueOf(id));
+        return commentRepository.findByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).get(),Long.valueOf(id)).orElseThrow(()-> new AdsNotFoundException("Комментарий не найден"));
     }
 
     public Comment updateAdsComment(Integer ad_pk, Integer id, Comment comment_new) {
         logger.info("Info updateAdsComment Изменение Комментария у объявления");
-       Comment comment = commentRepository.findCommentsByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).get(), Long.valueOf(id));
+       Comment comment = commentRepository.findByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).get(), Long.valueOf(id)).orElseThrow(()-> new AdsNotFoundException("Комментарий не найден"));
         comment.setId(comment_new.getId());
         comment.setText(comment_new.getText());
         comment.setCreatedAt(comment_new.getCreatedAt());
@@ -95,27 +93,25 @@ public class AdsService {
 
     public Advert getAds(Long id) {
         logger.info("Info Список объявлений по id");
-        return adsRepository.findAdvertById(id);
+        return adsRepository.findById(id).orElseThrow(()-> new AdsNotFoundException("Объявления по id не найдено"));
     }
 
     public Advert updateAds(Long id, Advert advert) {
         logger.info("Info updateAds");
-        Advert advert_ = adsRepository.findAdvertById(id);
+        Advert advert_ = adsRepository.findById(id).orElseThrow(()-> new AdsNotFoundException("Объявления по id не найдено"));
         advert_.setTitle(advert.getTitle());
         advert_.setPrice(advert.getPrice());
         return adsRepository.save(advert_);
     }
 
-    /* Объявления одного пользователя отсортированы по названию в алфавитном порядке*/
     public List<Advert> getAdvertsByUserId(Long id) {
         logger.info("Info getAdsMe");
-        return adsRepository.findAdvertByUsers(id).stream()
-                .sorted(Comparator.comparing(Advert::getTitle)).collect(Collectors.toList());
+        return adsRepository.findByUsers(id).orElseThrow(()->new UsersNotFoundException("У данного пользователя нет объявлений"));
     }
 
     public Comment addComment(Integer ad_pk, Comment comment) {
-        logger.info("Info addComment");
-        Advert advert = adsRepository.findAdvertById(Long.valueOf(ad_pk));
+        logger.info("Info addComment Добавление комментария");
+        Advert advert = adsRepository.findById(Long.valueOf(ad_pk)).orElseThrow(()->new AdsNotFoundException("Объявление не найдено"));
         logger.info("Advert", advert);
         comment.setAdvert(advert);
         return commentRepository.save(comment);
@@ -124,18 +120,18 @@ public class AdsService {
     public String findIdUserRole(String author) {
         logger.info("Info findIdUserRole Поиск роли по имени авторизованного пользователя");
         return userService.getUsers().stream()
-                .filter(user -> user.getFirstName().equals(author)).findFirst()
+                .filter(user -> user.getUsername().equals(author)).findFirst()
                 .orElseThrow(() -> new AuthorizedUserNotFoundException("Ошибка 403: пользователь не найден")).getRole();
     }
 
-    public Set<Long> findAdvertIdUser(Integer iduser) {
+    public Set<Long> findAdvertIdUser(Long iduser) {
         logger.info("Info findAdvertIdUser Поиск объявления у пользователя");
         return adsRepository.findAll().stream().
                 filter(advert -> advert.getUsers().equals((iduser))).
                 map(advert -> advert.getId()).collect(Collectors.toSet());
     }
 
-    public Set<Long> findIdComment(Integer iduser) {
+    public Set<Long> findIdComment(Long iduser) {
         logger.info("Info findIdComment Поиск  id комментария пользователя");
         return commentRepository.findAll().stream().
                 filter(comment -> comment.getUsers().equals((iduser))).

@@ -7,7 +7,9 @@ import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapperUserDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.exception.AuthorizedUserNotFoundException;
+import ru.skypro.homework.exception.UsersNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -27,9 +29,8 @@ public class UserService {
     }
 
     public List<Users> getUsers() {
-        logger.info("Info getUsers");
-        return userRepository.findAll().stream()
-                .sorted(Comparator.comparing(Users::getLastName)).collect(Collectors.toList());
+        logger.info("Info getUsers Список пользователей");
+        return userRepository.findAll();
     }
 
     public Users updateUser(Users user){
@@ -44,7 +45,7 @@ public class UserService {
 
     public Users getUser(Long id){
         logger.info("Info getUser");
-        return userRepository.findUsersById(id);
+        return userRepository.findById(id).orElseThrow(()-> new UsersNotFoundException("Пользователь не найден"));
     }
 
     public Users addUser(Users users){
@@ -53,10 +54,11 @@ public class UserService {
 
     }
 
-    public Long findIdUser(String author) {
+    public Users findIdUser(String author) {
         logger.info("Info findIdUser Поиск id пользователя по имени авторизованного пользователя");
-         List<Users> users = userRepository.findUsersByUsername(author);
-         return users.stream().findFirst().get().getId();
+         Users users = userRepository.findByUsername(author).orElseThrow(()-> new UsersNotFoundException("Пользователь не найден"));
+        return users;
+
     }
 
 

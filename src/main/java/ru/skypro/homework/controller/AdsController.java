@@ -2,9 +2,11 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,9 @@ import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,7 +61,7 @@ public class AdsController {
     /**
      * Возвращает список объявлений.
      */
-    @GetMapping("/search-all/")
+    @GetMapping()
     @Operation(summary = "Получить список объявлений", responses = {@ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     public ResponseEntity<ResponseWrapperAdsDto> getAllAds() {
         List<AdsDto> listAdsDto = adsService.getAllAds().stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
@@ -80,18 +84,18 @@ public class AdsController {
      * Добавить объявления.
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    @PostMapping(consumes = {"multipart/form-data"})
+    @PostMapping(consumes =MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<AdsDto> addAds(
             Authentication authentication,
-            @RequestPart("properties") CreateAdsDto createAdsDto,
-            @Parameter(description = "Изображение")
-            @RequestPart("image") MultipartFile file
+           @Valid @RequestPart("properties") @Parameter(schema=@Schema(type="string", format="binary")) CreateAdsDto createAdsDto,
+            @Parameter(description = "Изображение")  @RequestPart("image") MultipartFile file
     ) {
         System.out.println(authentication.getName());
-        Long idUser = userService.findIdUser(authentication.getName());
-        System.out.println(idUser);
+        Users users = userService.findIdUser(authentication.getName());
+        System.out.println(users);
         Advert advert = adsMapper.createAdsDtoToAds(createAdsDto);
-        advert.setUsers(idUser.intValue());
+        advert.setUsers(users);
         Advert adsCreated = adsService.addAds(advert);
 
         String imageId = imageService.uploadImage(adsCreated, file);
@@ -107,8 +111,8 @@ public class AdsController {
     @Operation(summary = "Возвращает список комментариев по ad_pk", responses = {@ApiResponse(responseCode = "200", description = "ОК"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/{ad_pk}/comment")
     public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk) {
-        List<Comment> commentList = adsService.getAdsComments(ad_pk);
-        List<AdsCommentDto> adsCommentDtoList = commentList.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
+        Optional<Comment> comment = adsService.getAdsComments(ad_pk);
+        List<AdsCommentDto> adsCommentDtoList = comment.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsCommentDto(adsCommentDtoList.size(), adsCommentDtoList));
     }
 
@@ -119,7 +123,6 @@ public class AdsController {
     @Operation(summary = "Создание комментариев по ad_pk", responses = {@ApiResponse(responseCode = "200", description = "ОК"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PostMapping("/{ad_pk}/comment")
     public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @RequestBody AdsCommentDto adsCommentDto) {
-
         return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto)));
     }
 
@@ -130,14 +133,13 @@ public class AdsController {
     @Operation(summary = "Удаление комментария по id .", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @DeleteMapping("/{ad_pk}/comment/{id}")
     public void deleteAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @PathVariable Integer id, Authentication authentication) {
-        Long idUser1 = userService.findIdUser(authentication.getName());
+        Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
-        int i = idUser1.intValue();
         //Проверяем есть ли у данного пользователя комментарии и записываем их id в лист
-        Set<Long> idComment = adsService.findIdComment(i);
+        Set<Long> idComment = adsService.findIdComment(users.getId());
         //Если выбраный комментарий создан пользователем, то можно удалять
         if (idComment.contains(Long.valueOf(id)) || userRole.equals("ADMIN")) {
-            adsService.deleteAdsComment(ad_pk, id);
+            adsService.deleteAdsComment(id);
         } else {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете удалить данный комментарий!");
         }
@@ -160,11 +162,10 @@ public class AdsController {
     @Operation(summary = "Изменение комментария по id .", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенно"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PatchMapping("/{ad_pk}/comment/{id}")
     public Comment updateAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @PathVariable Integer id, @RequestBody Comment comment, Authentication authentication) {
-        Long idUser1 = userService.findIdUser(authentication.getName());
+        Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
-        int i = idUser1.intValue();
         //Проверяем есть ли у данного пользователя комментарии и записываем их id в лист
-        Set<Long> idComment = adsService.findIdComment(i);
+        Set<Long> idComment = adsService.findIdComment(users.getId());
         //Если выбраный комментарий создан пользователем, то можно редактировать
         if (idComment.contains(Long.valueOf(id)) || userRole.equals("ADMIN")) {
             return adsService.updateAdsComment(ad_pk, id, comment);
@@ -184,8 +185,8 @@ public class AdsController {
                                                           @Parameter(description = "") @RequestParam(required = false) Object details,
                                                           @Parameter(description = "") @RequestParam(required = false) Object principal,
                                                           Authentication authentication) {
-        Long idUser = userService.findIdUser(authentication.getName());
-        List<Advert> adsList = adsService.getAdvertsByUserId(idUser);
+        Users users = userService.findIdUser(authentication.getName());
+        List<Advert> adsList = adsService.getAdvertsByUserId(users.getId());
         List<AdsDto> adsDtoList = adsList.stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsDto(adsDtoList.size(), adsDtoList));
     }
@@ -197,11 +198,10 @@ public class AdsController {
     @Operation(summary = "Удаление объявление по id.", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенно"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @DeleteMapping("/{id}")
     public ResponseEntity removeAds(@Parameter(description = "id объявления") @PathVariable Long id, Authentication authentication) {
-        Long idUser1 = userService.findIdUser(authentication.getName());
+        Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
-        int i = idUser1.intValue();
         //Проверяем есть ли у данного пользователя объявления и записываем их в лист
-        Set<Long> idAdvert = adsService.findAdvertIdUser(i);
+        Set<Long> idAdvert = adsService.findAdvertIdUser(users.getId());
         //Если выбранное объявление создано пользователем, то можно удалять
         if (idAdvert.contains(id) || userRole.equals("ADMIN")) {
             adsService.removeAds(id);
@@ -231,11 +231,10 @@ public class AdsController {
     public AdsDto updateAds(@Parameter(description = "id объявления") @PathVariable Long id,
                             @Parameter(description = "") @RequestBody AdsDto adsDto,
                             Authentication authentication) throws Exception {
-        Long idUser1 = userService.findIdUser(authentication.getName());
+        Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
-        int i = idUser1.intValue();
         //Проверяем есть ли у данного пользователя объявления и записываем их в лист
-        Set<Long> idAdvert1 = adsService.findAdvertIdUser(i);
+        Set<Long> idAdvert1 = adsService.findAdvertIdUser(users.getId());
         //Если выбранное объявление создано пользователем, то можно редактировать
         if (idAdvert1.contains(id) || userRole.equals("ADMIN")) {
             return adsMapper.toAdsDTO(adsService.updateAds(id, adsMapper.adsDTOtoAdvert(adsDto)));

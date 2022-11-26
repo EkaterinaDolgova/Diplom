@@ -5,11 +5,12 @@ import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    Comment findCommentsByAdvertAndId(Advert advert, Long id );
-    List<Comment> findCommentsByAdvert(Advert advert);
+    Optional<Comment> findByAdvertAndId(Advert advert, Long id );
+    Optional<Comment> findByAdvert(Advert advert);
     void deleteById(Long id);
 
 }
