@@ -41,6 +41,7 @@ public class Users {
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
                 ", phone='" + phone + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
 }

@@ -87,9 +87,10 @@ public class AdsController {
     @PostMapping(consumes =MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<AdsDto> addAds(
-            Authentication authentication,
-           @Valid @RequestPart("properties") @Parameter(schema=@Schema(type="string", format="binary")) CreateAdsDto createAdsDto,
-            @Parameter(description = "Изображение")  @RequestPart("image") MultipartFile file
+           Authentication authentication,
+        //   @Valid @RequestPart("properties") @Parameter(schema=@Schema(type="string", format="binary")) CreateAdsDto createAdsDto,
+           @RequestPart("properties") CreateAdsDto createAdsDto,
+           @Parameter(description = "Изображение")  @RequestPart("image") MultipartFile file
     ) {
         System.out.println(authentication.getName());
         Users users = userService.findIdUser(authentication.getName());

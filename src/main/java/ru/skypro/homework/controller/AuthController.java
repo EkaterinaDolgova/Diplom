@@ -12,6 +12,7 @@ import ru.skypro.homework.dto.LoginReqDto;
 import ru.skypro.homework.dto.RegisterReqDto;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.service.AuthService;
+import ru.skypro.homework.service.UserService;
 
 import static ru.skypro.homework.dto.Role.USER;
 
@@ -22,6 +23,7 @@ import static ru.skypro.homework.dto.Role.USER;
 public class AuthController {
 
     private final AuthService authService;
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDto req) {

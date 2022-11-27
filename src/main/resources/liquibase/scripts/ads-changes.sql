@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS users -- Создание таблицы Пользо
     firstName  varchar(32),
     lastName   varchar(32),
     phone      varchar(32),
+    role      varchar(32),
     username varchar(50) not null unique ,
     password varchar(500) not null,
     enabled boolean not null
@@ -46,23 +47,4 @@ CREATE TABLE IF NOT EXISTS authorities (
     FOREIGN KEY (username)
     REFERENCES users (username)
     );
-
 create unique index IF NOT EXISTS ix_auth_username on authorities (username,authority);
-
--- changeset bakulin:2
-
-ALTER TABLE image DROP COLUMN file_path
-
--- changeset bakulin:3
-ALTER TABLE image DROP COLUMN file_size
-
--- changeset bakulin:4
-ALTER TABLE image DROP COLUMN media_type
-
---changeset bakulin:6
-ALTER TABLE image DROP COLUMN advert_id
-
---changeset bakulin:7
-ALTER TABLE image DROP COLUMN data
-
-

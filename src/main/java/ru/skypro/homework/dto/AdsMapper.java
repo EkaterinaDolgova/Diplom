@@ -9,7 +9,7 @@ import ru.skypro.homework.entities.Advert;
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface AdsMapper {
     @Mapping(source = "id", target = "pk")
-    @Mapping(source = "users", target = "author")
+    @Mapping(source = "users.id", target = "author")
     //@Mapping(source = "images",target = "image", qualifiedByName = "getLastImageString")
     AdsDto toAdsDTO(Advert advert);
 
@@ -19,7 +19,7 @@ public interface AdsMapper {
         return (lastImage == null) ? null : "/ads/image/" + lastImage.getId().toString();
     }*/
     @Mapping(source = "pk", target = "id")
-    @Mapping(source = "author", target = "users")
+    @Mapping(source = "author", target = "users.id")
     Advert adsDTOtoAdvert(AdsDto adsDto);
 
     @Mapping(source = "id", target = "pk")
