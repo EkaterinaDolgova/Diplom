@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
@@ -63,10 +64,12 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PatchMapping("/users/me")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(Authentication authentication, @RequestBody UserDto userDto) {
         logger.info("Info updateUser");
-        return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(userMapper.userDtoFromUsers(userDto))));
+        Users users = userService.findIdUser(authentication.getName());
+        return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(users,userDto)));
     }
 
     /**

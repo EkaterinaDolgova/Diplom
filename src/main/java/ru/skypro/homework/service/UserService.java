@@ -33,8 +33,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Users updateUser(Users user){
+    public Users updateUser(Users user, UserDto userDto){
         logger.info("Info updateUser");
+        if (userDto.getFirstName()!=null) {
+            user.setFirstName(userDto.getFirstName());}
+        if (userDto.getLastName()!=null) {
+            user.setLastName(userDto.getLastName());}
+        if(userDto.getPhone()!=null) {
+            user.setPhone(userDto.getPhone());
+        }
+        if (userDto.getEmail()!=null) {
+            user.setEmail(userDto.getEmail());
+        }
         return userRepository.save(user);
     }
 
