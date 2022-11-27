@@ -112,8 +112,8 @@ public class AdsController {
     @Operation(summary = "Возвращает список комментариев по ad_pk", responses = {@ApiResponse(responseCode = "200", description = "ОК"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/{ad_pk}/comment")
     public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk) {
-        Optional<Comment> comment = adsService.getAdsComments(ad_pk);
-        List<AdsCommentDto> adsCommentDtoList = comment.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
+        List <Comment> comments = adsService.getAdsComments(ad_pk);
+        List<AdsCommentDto> adsCommentDtoList = comments.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsCommentDto(adsCommentDtoList.size(), adsCommentDtoList));
     }
 

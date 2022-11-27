@@ -1,5 +1,6 @@
 package ru.skypro.homework.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "advert_id")
+    @JsonIgnore
     private Advert advert;
 
     public Comment() {
