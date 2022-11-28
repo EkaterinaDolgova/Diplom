@@ -34,9 +34,10 @@ public class Advert {
   //  @JsonIgnore
    // @OneToMany(mappedBy = "advert", fetch = FetchType.EAGER)
 
-    @OneToMany(mappedBy = "advert")
+   // @OneToMany(mappedBy = "advert")
+    @OneToOne//(mappedBy = "advert", fetch = FetchType.EAGER)
     @JsonIgnore
-    private List<Image> images;
+    private Image images;
 
     private Integer price;
     private String title;
@@ -58,9 +59,9 @@ public class Advert {
                 '}';
     }
 
-    public Image getLastImage() {
+ /*   public Image getLastImage() {
         return ((images == null) || (images.size()) == 0) ? null : images.get(images.size() - 1);
-    }
+    }*/
 
 
 }

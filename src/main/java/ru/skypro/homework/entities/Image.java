@@ -21,7 +21,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "id_ads")
     private Advert advert;
 
@@ -32,7 +32,7 @@ public class Image {
 
     @Override
     public String toString() {
-        return "AdsImageEntity{" +
+        return "Image{" +
                 "id=" + id +
                 ", ads=" + advert +
                 ", image=" + Arrays.toString(image) +
