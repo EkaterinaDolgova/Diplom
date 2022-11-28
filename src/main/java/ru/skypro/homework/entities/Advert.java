@@ -34,7 +34,7 @@ public class Advert {
   //  @JsonIgnore
    // @OneToMany(mappedBy = "advert", fetch = FetchType.EAGER)
 
-    @OneToMany(mappedBy = "advert")
+    @OneToMany(mappedBy = "advert", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Image> images;
 

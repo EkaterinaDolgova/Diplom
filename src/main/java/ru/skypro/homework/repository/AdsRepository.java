@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface AdsRepository extends JpaRepository<Advert, Long> {
     Optional<Advert> findById(Long id);
-    Optional<List<Advert>> findByUsers(Long id);
+    List<Advert> findByUsersId(Long id);
     List<Advert> findByTitleContaining(String title) ;
 
 }
