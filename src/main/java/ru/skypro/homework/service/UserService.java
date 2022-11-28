@@ -49,7 +49,7 @@ public class UserService {
     }
 
     public NewPasswordDto setPassword(){
-        logger.info("Info setPasswod");
+        logger.info("Info setPassword");
         return new NewPasswordDto("currentPassword","newPassword");
     }
 

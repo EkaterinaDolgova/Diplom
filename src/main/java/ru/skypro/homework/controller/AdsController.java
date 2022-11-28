@@ -2,17 +2,14 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
@@ -22,12 +19,11 @@ import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.AdsService;
+import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,15 +41,17 @@ public class AdsController {
     private final AdsCommentMapper adsCommentMapper;
     private final UserService userService;
     private final CommentRepository commentRepository;
+    private final AuthService authService;
 
 
-    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService, CommentRepository commentRepository) {
+    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService, CommentRepository commentRepository, AuthService authService) {
         this.adsService = adsService;
         this.adsMapper = adsMapper;
         this.imageService = imageService;
         this.adsCommentMapper = adsCommentMapper;
         this.userService = userService;
         this.commentRepository = commentRepository;
+        this.authService = authService;
     }
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
@@ -84,14 +82,14 @@ public class AdsController {
      * Добавить объявления.
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    @PostMapping(consumes =MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<AdsDto> addAds(
-           Authentication authentication,
-        //   @Valid @RequestPart("properties") @Parameter(schema=@Schema(type="string", format="binary")) CreateAdsDto createAdsDto,
-           @RequestPart("properties") CreateAdsDto createAdsDto,
-           @Parameter(description = "Изображение")  @RequestPart("image") MultipartFile file
+            @Parameter(description = "Параметры объявления")
+            @RequestPart("properties") CreateAdsDto createAdsDto,
+            @Parameter(description = "Изображение")
+            @RequestPart("image") MultipartFile file, Authentication authentication
     ) {
+        logger.info("Добавление объявления: {}");
         System.out.println(authentication.getName());
         Users users = userService.findIdUser(authentication.getName());
         System.out.println(users);
@@ -106,13 +104,14 @@ public class AdsController {
         return ResponseEntity.ok(adsDto);
     }
 
+
     /**
      * Возвращает список комментариев по ad_pk .
      */
     @Operation(summary = "Возвращает список комментариев по ad_pk", responses = {@ApiResponse(responseCode = "200", description = "ОК"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/{ad_pk}/comment")
     public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk) {
-        List <Comment> comments = adsService.getAdsComments(ad_pk);
+        List<Comment> comments = adsService.getAdsComments(ad_pk);
         List<AdsCommentDto> adsCommentDtoList = comments.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperAdsCommentDto(adsCommentDtoList.size(), adsCommentDtoList));
     }
