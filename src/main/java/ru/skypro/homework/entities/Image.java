@@ -32,7 +32,7 @@ public class Image {
 
     @Override
     public String toString() {
-        return "AdsImageEntity{" +
+        return "Image{" +
                 "id=" + id +
                 ", ads=" + advert +
                 ", image=" + Arrays.toString(image) +

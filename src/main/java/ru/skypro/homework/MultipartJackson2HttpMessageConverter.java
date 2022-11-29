@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 
+/**
+ * Класс для работы с файлами изображений и json.
+ */
 @Component
 
 public class MultipartJackson2HttpMessageConverter extends AbstractJackson2HttpMessageConverter {

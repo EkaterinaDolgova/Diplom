@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -15,9 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
+import ru.skypro.homework.entities.Image;
 import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.repository.CommentRepository;
+import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.ImageService;
@@ -43,9 +44,10 @@ public class AdsController {
     private final UserService userService;
     private final CommentRepository commentRepository;
     private final AuthService authService;
+    private final ImageRepository imageRepository;
 
 
-    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService, CommentRepository commentRepository, AuthService authService) {
+    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService, CommentRepository commentRepository, AuthService authService, ImageRepository imageRepository) {
         this.adsService = adsService;
         this.adsMapper = adsMapper;
         this.imageService = imageService;
@@ -53,6 +55,7 @@ public class AdsController {
         this.userService = userService;
         this.commentRepository = commentRepository;
         this.authService = authService;
+        this.imageRepository = imageRepository;
     }
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
@@ -91,9 +94,7 @@ public class AdsController {
             @RequestPart("image") MultipartFile file, Authentication authentication
     ) {
         logger.info("Добавление объявления: {}");
-        System.out.println(authentication.getName());
         Users users = userService.findIdUser(authentication.getName());
-        System.out.println(users);
         Advert advert = adsMapper.createAdsDtoToAds(createAdsDto);
         advert.setUsers(users);
         Advert adsCreated = adsService.addAds(advert);
@@ -102,9 +103,12 @@ public class AdsController {
         AdsDto adsDto = adsMapper.toAdsDTO(adsCreated);
         adsDto.setImage("/ads/image/" + imageId);
 
+        //Запишем url картинки
+        String imageString = "/ads/image/" + imageId;
+        Integer idAdvert = adsDto.getPk();
+        adsService.updateAdsImage(idAdvert.longValue(), imageString);
         return ResponseEntity.ok(adsDto);
     }
-
 
     /**
      * Возвращает список комментариев по ad_pk .
@@ -245,20 +249,23 @@ public class AdsController {
         }
     }
 
-  /*  @Operation(summary = "Обновить картинки объявлений", responses = {@ApiResponse(responseCode = "200", description = "Картинки успешно загружена"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
+    /**
+     * Изменение картинки в объявлении .
+     */
+    @Operation(summary = "Обновить картинки объявлений", responses = {@ApiResponse(responseCode = "200", description = "Картинки успешно загружена"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestParam MultipartFile image, Authentication authentication) throws Exception {
-        Long idUser1 = userService.findIdUser(authentication.getName());
+        Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
-        int i = idUser1.intValue();
         //Проверяем есть ли у данного пользователя объявления и записываем их в лист
-        Set<Long> idAdvert1 = adsService.findAdvertIdUser(i);
+        Set<Long> idAdvert1 = adsService.findAdvertIdUser(users.getId());
         //Если выбранное объявление создано пользователем, то можно редактировать
         if (idAdvert1.contains(id) || userRole.equals("ADMIN")) {
-            imageService.updateImage(id, image);
+            Advert advert = adsService.getAds(id);
+            imageService.createImage(advert, image);
             return ResponseEntity.ok().build();
         } else {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
         }
-    }*/
+    }
 }
