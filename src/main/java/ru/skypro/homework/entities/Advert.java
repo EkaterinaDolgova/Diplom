@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicInsert;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс Объявление
@@ -29,10 +30,7 @@ public class Advert {
     @JoinColumn(name = "users")
     @JsonIgnore
     private Users users;
-
-    @OneToMany(mappedBy = "advert", fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<Image> images;
+    private String image;
 
     private Integer price;
     private String title;
@@ -53,10 +51,5 @@ public class Advert {
                 ", Наименование='" + title + '\'' +
                 '}';
     }
-
- /*   public Image getLastImage() {
-        return ((images == null) || (images.size()) == 0) ? null : images.get(images.size() - 1);
-    }*/
-
 
 }

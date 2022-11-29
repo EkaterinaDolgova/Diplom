@@ -17,8 +17,6 @@ public class CreateAdsDto {
     @JsonProperty("price")
     private Integer price = null;
 
-
-
     @JsonProperty("title")
     private String title = null;
 
@@ -27,8 +25,10 @@ public class CreateAdsDto {
         this.price = price;
         this.title = title;
     }
+
     public CreateAdsDto() {
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
