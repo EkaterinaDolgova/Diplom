@@ -4,18 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.NewPasswordDto;
-import ru.skypro.homework.dto.ResponseWrapperUserDto;
-import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entities.Users;
-import ru.skypro.homework.exception.AdsNotFoundException;
-import ru.skypro.homework.exception.AuthorizedUserNotFoundException;
 import ru.skypro.homework.exception.UsersNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -43,7 +36,7 @@ public class UserService {
      *
      * @return обновление пользователя.
      */
-    public Users updateUser(Users user, UserDto userDto) {
+    public Users updateUser(Users user, ImageService.UserDto userDto) {
         logger.info("Info updateUser");
         if (userDto.getFirstName() != null) {
             user.setFirstName(userDto.getFirstName());
