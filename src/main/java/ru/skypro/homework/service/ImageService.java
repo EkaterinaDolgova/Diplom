@@ -2,9 +2,9 @@ package ru.skypro.homework.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.ImageUtility;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Image;
 import ru.skypro.homework.exception.AdsNotFoundException;
@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import static com.datical.liquibase.ext.init.InitProjectUtil.getExtension;
+
 
 @Service
 public class ImageService {
@@ -36,7 +37,7 @@ public class ImageService {
             try {
                 imageContent = getImageContent(file);
             } catch (IOException e) {
-                throw new AdsNotFoundException("no");
+                throw new AdsNotFoundException("Failed to extract image contents");
             }
             Image image = new Image();
             image.setAdvert(advert);
@@ -73,6 +74,24 @@ public class ImageService {
 
             return baos.toByteArray();
         }
+
+    /**
+     * Создает новое изображение для объявления.
+     *
+     */
+    public String createImage(Advert advert, MultipartFile file) {
+        byte[] imageContent;
+        try {
+            imageContent = ImageUtility.getImageContent(file);
+        } catch (IOException e) {
+            throw new AdsNotFoundException("Failed to extract image contents");
+        }
+
+        Image image = imageRepository.findById(advert.getId()).get();
+        image.setImage(imageContent);
+
+        return imageRepository.save(image).getId().toString();
+    }
 
 
 }

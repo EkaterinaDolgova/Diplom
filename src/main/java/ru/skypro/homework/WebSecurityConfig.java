@@ -20,7 +20,7 @@ public class WebSecurityConfig {
             "/swagger-ui.html",
             "/v3/api-docs",
             "/webjars/",
-            "/login", "/register", "/ads/"
+            "/login", "/register", "/ads/**"
     };
 
     @Bean
@@ -37,8 +37,6 @@ public class WebSecurityConfig {
                         authz
                                 .mvcMatchers(AUTH_WHITELIST).permitAll()
                                 .mvcMatchers("/ads/**", "/users/**").hasAnyRole("ADMIN", "USER")
-                                //разрешить всем
-                            //    .mvcMatchers("/ads/**", "/users/**").permitAll()
                 )
                 .cors(withDefaults())
                 .httpBasic(withDefaults());

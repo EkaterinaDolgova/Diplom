@@ -101,9 +101,12 @@ public class AdsController {
         AdsDto adsDto = adsMapper.toAdsDTO(adsCreated);
         adsDto.setImage("/ads/image/" + imageId);
 
+        //Запишем url картинки
+        String imageString = "/ads/image/" + imageId;
+        Integer idAdvert = adsDto.getPk();
+        adsService.updateAdsImage(idAdvert.longValue(), imageString);
         return ResponseEntity.ok(adsDto);
     }
-
 
     /**
      * Возвращает список комментариев по ad_pk .
@@ -244,20 +247,23 @@ public class AdsController {
         }
     }
 
-  /*  @Operation(summary = "Обновить картинки объявлений", responses = {@ApiResponse(responseCode = "200", description = "Картинки успешно загружена"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
+    /**
+     * Изменение картинки в объявлении .
+     */
+    @Operation(summary = "Обновить картинки объявлений", responses = {@ApiResponse(responseCode = "200", description = "Картинки успешно загружена"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestParam MultipartFile image, Authentication authentication) throws Exception {
-        Long idUser1 = userService.findIdUser(authentication.getName());
+        Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
-        int i = idUser1.intValue();
         //Проверяем есть ли у данного пользователя объявления и записываем их в лист
-        Set<Long> idAdvert1 = adsService.findAdvertIdUser(i);
+        Set<Long> idAdvert1 = adsService.findAdvertIdUser(users.getId());
         //Если выбранное объявление создано пользователем, то можно редактировать
         if (idAdvert1.contains(id) || userRole.equals("ADMIN")) {
-            imageService.updateImage(id, image);
+            Advert advert = adsService.getAds(id);
+            imageService.createImage(advert, image);
             return ResponseEntity.ok().build();
         } else {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
         }
-    }*/
+    }
 }

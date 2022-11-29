@@ -28,8 +28,6 @@ public class Users {
     private String username;
     private String password;
     private Boolean enabled;
-  //  @OneToMany
-   // private Collection<Advert> advert;
 
     public Users() {
     }

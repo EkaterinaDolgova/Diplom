@@ -30,13 +30,7 @@ public class Advert {
     @JoinColumn(name = "users")
     @JsonIgnore
     private Users users;
-
-  //  @JsonIgnore
-   // @OneToMany(mappedBy = "advert", fetch = FetchType.EAGER)
-
-    @OneToMany(mappedBy = "advert")
-    @JsonIgnore
-    private List<Image> images;
+    private String image;
 
     private Integer price;
     private String title;
@@ -57,10 +51,5 @@ public class Advert {
                 ", Наименование='" + title + '\'' +
                 '}';
     }
-
-    public Image getLastImage() {
-        return ((images == null) || (images.size()) == 0) ? null : images.get(images.size() - 1);
-    }
-
 
 }

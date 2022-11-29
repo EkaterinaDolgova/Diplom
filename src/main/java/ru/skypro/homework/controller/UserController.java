@@ -36,6 +36,9 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
+    /**
+     * Получить весь список пользователей
+     */
     @Operation(
             summary = "Получить список User's",
             responses = {
@@ -69,7 +72,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateUser(Authentication authentication, @RequestBody UserDto userDto) {
         logger.info("Info updateUser");
         Users users = userService.findIdUser(authentication.getName());
-        return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(users,userDto)));
+        return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(users, userDto)));
     }
 
     /**
@@ -108,9 +111,11 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
+    /**
+     * Добавить пользователя
+     */
     @Operation(
-            summary = "Add User",
+            summary = "Добавить пользователя",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Список успешно получен"),
                     @ApiResponse(responseCode = "401", description = "Неавторизованный"),
@@ -122,7 +127,6 @@ public class UserController {
     public ResponseEntity<UserDto> addUsers(@Parameter(description = "") @PathVariable UserDto userDto) {
         Users users = userMapper.userDtoFromUsers(userDto);
         userService.addUser(users);
-           //     userService.addUser(userMapper.userDtoFromUsers(userDto));
         return ResponseEntity.ok(userMapper.toUserDTO(users));
 
     }
@@ -142,10 +146,6 @@ public class UserController {
     @PatchMapping("/users/me/image")
     public ResponseEntity<UserDto> UpdateUserImage(@Valid @RequestPart(name = "properties") UserDto userDto,
                                                    @RequestPart("image") MultipartFile file) {
-
-
         return null;
     }
-
-
 }
