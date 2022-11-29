@@ -3,7 +3,7 @@ package ru.skypro.homework.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.service.ImageService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -22,9 +22,9 @@ public class ResponseWrapperUserDto {
     private Integer count = null;
     @JsonProperty("results")
     @Valid
-    private List<UserDto> results = null;
+    private List<ImageService.UserDto> results = null;
 
-    public ResponseWrapperUserDto(Integer count, List<UserDto> results) {
+    public ResponseWrapperUserDto(Integer count, List<ImageService.UserDto> results) {
         this.count = count;
         this.results = results;
     }
@@ -49,14 +49,14 @@ public class ResponseWrapperUserDto {
         this.count = count;
     }
 
-    public ResponseWrapperUserDto results(List<UserDto> results) {
+    public ResponseWrapperUserDto results(List<ImageService.UserDto> results) {
         this.results = results;
         return this;
     }
 
-    public ResponseWrapperUserDto addResultsItem(UserDto resultsItem) {
+    public ResponseWrapperUserDto addResultsItem(ImageService.UserDto resultsItem) {
         if (this.results == null) {
-            this.results = new ArrayList<UserDto>();
+            this.results = new ArrayList<ImageService.UserDto>();
         }
         this.results.add(resultsItem);
         return this;
@@ -69,11 +69,11 @@ public class ResponseWrapperUserDto {
      **/
     @Schema(description = "")
     @Valid
-    public List<UserDto> getResults() {
+    public List<ImageService.UserDto> getResults() {
         return results;
     }
 
-    public void setResults(List<UserDto> results) {
+    public void setResults(List<ImageService.UserDto> results) {
         this.results = results;
     }
 

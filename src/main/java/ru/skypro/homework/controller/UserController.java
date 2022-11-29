@@ -11,8 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
-import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import javax.validation.Valid;
@@ -51,7 +51,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/users/me")
     public ResponseEntity<ResponseWrapperUserDto> getUsers() {
-        List<UserDto> userDtoList = userService.getUsers().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
+        List<ImageService.UserDto> userDtoList = userService.getUsers().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
         return ResponseEntity.ok(new ResponseWrapperUserDto(userDtoList.size(), userDtoList));
     }
 
@@ -69,7 +69,7 @@ public class UserController {
     )
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PatchMapping("/users/me")
-    public ResponseEntity<UserDto> updateUser(Authentication authentication, @RequestBody UserDto userDto) {
+    public ResponseEntity<ImageService.UserDto> updateUser(Authentication authentication, @RequestBody ImageService.UserDto userDto) {
         logger.info("Info updateUser");
         Users users = userService.findIdUser(authentication.getName());
         return ResponseEntity.ok(userMapper.toUserDTO(userService.updateUser(users, userDto)));
@@ -105,7 +105,7 @@ public class UserController {
             }
     )
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+    public ResponseEntity<ImageService.UserDto> getUser(@PathVariable Long id) {
         return Optional.ofNullable(userMapper.toUserDTO(userService.getUser(id)))
                 .map(st -> ResponseEntity.ok(st))
                 .orElse(ResponseEntity.notFound().build());
@@ -124,7 +124,7 @@ public class UserController {
             }
     )
     @PostMapping("/users/add")
-    public ResponseEntity<UserDto> addUsers(@Parameter(description = "") @PathVariable UserDto userDto) {
+    public ResponseEntity<ImageService.UserDto> addUsers(@Parameter(description = "") @PathVariable ImageService.UserDto userDto) {
         Users users = userMapper.userDtoFromUsers(userDto);
         userService.addUser(users);
         return ResponseEntity.ok(userMapper.toUserDTO(users));
@@ -144,8 +144,8 @@ public class UserController {
             }
     )
     @PatchMapping("/users/me/image")
-    public ResponseEntity<UserDto> UpdateUserImage(@Valid @RequestPart(name = "properties") UserDto userDto,
-                                                   @RequestPart("image") MultipartFile file) {
+    public ResponseEntity<ImageService.UserDto> UpdateUserImage(@Valid @RequestPart(name = "properties") ImageService.UserDto userDto,
+                                                                @RequestPart("image") MultipartFile file) {
         return null;
     }
 }

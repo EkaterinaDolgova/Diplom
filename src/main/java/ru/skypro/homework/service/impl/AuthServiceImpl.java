@@ -52,10 +52,8 @@ public class AuthServiceImpl implements AuthService {
         );
         System.out.println(registerReq.getUsername());
         Users users = userRepository.findByUsername(registerReq.getUsername()).orElseThrow(()-> new UsersNotFoundException("Пользователь не найден"));
-        System.out.println(users);
         users.setRole("USER");
         userRepository.save(users);
-        System.out.println(users.getRole());
         return true;
     }
 }
