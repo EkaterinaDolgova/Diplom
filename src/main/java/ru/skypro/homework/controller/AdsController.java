@@ -93,9 +93,7 @@ public class AdsController {
             @RequestPart("image") MultipartFile file, Authentication authentication
     ) {
         logger.info("Добавление объявления: {}");
-        System.out.println(authentication.getName());
         Users users = userService.findIdUser(authentication.getName());
-        System.out.println(users);
         Advert advert = adsMapper.createAdsDtoToAds(createAdsDto);
         advert.setUsers(users);
         Advert adsCreated = adsService.addAds(advert);
@@ -106,7 +104,6 @@ public class AdsController {
 
         return ResponseEntity.ok(adsDto);
     }
-
 
     /**
      * Возвращает список комментариев по ad_pk .

@@ -9,7 +9,6 @@ import org.hibernate.annotations.DynamicInsert;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Класс Объявление
@@ -31,13 +30,9 @@ public class Advert {
     @JsonIgnore
     private Users users;
 
-  //  @JsonIgnore
-   // @OneToMany(mappedBy = "advert", fetch = FetchType.EAGER)
-
-   // @OneToMany(mappedBy = "advert")
-    @OneToOne//(mappedBy = "advert", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "advert", fetch = FetchType.EAGER)
     @JsonIgnore
-    private Image images;
+    private List<Image> images;
 
     private Integer price;
     private String title;
