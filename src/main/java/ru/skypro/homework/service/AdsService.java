@@ -157,7 +157,7 @@ public class AdsService {
      */
     public List<Advert> getAdvertsByUserId(Long id) {
         logger.info("Info getAdsMe");
-        return adsRepository.findByUsers(id).orElseThrow(() -> new UsersNotFoundException("У данного пользователя нет объявлений"));
+        return adsRepository.findByUsers(id);//.orElseThrow(() -> new UsersNotFoundException("У данного пользователя нет объявлений"));
     }
 
     /**

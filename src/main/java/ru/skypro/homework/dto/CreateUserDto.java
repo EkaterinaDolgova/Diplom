@@ -9,20 +9,20 @@ import org.springframework.validation.annotation.Validated;
 
 
 public class CreateUserDto {
-    @JsonProperty("email")
-    private String email = null;
+    @JsonProperty()
+    private String email;
 
-    @JsonProperty("firstName")
-    private String firstName = null;
+    @JsonProperty()
+    private String firstName;
 
-    @JsonProperty("lastName")
-    private String lastName = null;
+    @JsonProperty()
+    private String lastName;
 
-    @JsonProperty("password")
-    private String password = null;
+    @JsonProperty()
+    private String password;
 
-    @JsonProperty("phone")
-    private String phone = null;
+    @JsonProperty()
+    private String phone;
 
     public CreateUserDto email(String email) {
         this.email = email;

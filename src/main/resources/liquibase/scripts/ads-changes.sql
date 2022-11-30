@@ -3,7 +3,7 @@
 -- changeset kew:1
 CREATE TABLE IF NOT EXISTS advert --Создание таблицы Объявлений
 (
-    id     bigint        PRIMARY KEY,
+    id     bigserial        PRIMARY KEY,
     users bigint NOT NULL,
     image  varchar(32),
     price  integer NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS advert --Создание таблицы Объявл
 
 CREATE TABLE IF NOT EXISTS comment --Создание таблицы Объявление комментарии
 (
-    id     bigint PRIMARY KEY,
+    id     bigserial PRIMARY KEY,
     users integer NOT NULL,
     createdate  varchar(32),
     text  varchar(32)
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS users -- Создание таблицы Пользо
 
 CREATE TABLE IF NOT EXISTS image -- --Создание таблицы Картинки
 (
-    id     bigint PRIMARY KEY,
+    id      bigserial PRIMARY KEY,
     filePath  varchar(32),
     fileSize  bigint,
     mediaType   varchar(32),

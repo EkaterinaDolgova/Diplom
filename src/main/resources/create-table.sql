@@ -1,7 +1,7 @@
 --Создание таблицы Объявлений
 CREATE TABLE IF NOT EXISTS advert
 (
-    id     bigint        PRIMARY KEY,
+    id    bigserial        PRIMARY KEY,
     users bigint NOT NULL,
     image  varchar(32),
     price  integer NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS advert
 --Создание таблицы Объявление комментарии
 CREATE TABLE IF NOT EXISTS comment
 (
-    id     bigint PRIMARY KEY,
+    id     bigserial PRIMARY KEY,
     users integer NOT NULL,
     createdate  varchar(32),
     text  varchar(32)

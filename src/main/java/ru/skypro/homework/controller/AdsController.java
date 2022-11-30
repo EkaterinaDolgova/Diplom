@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -88,9 +90,9 @@ public class AdsController {
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<AdsDto> addAds(
             @Parameter(description = "Параметры объявления")
-            @RequestPart("properties") CreateAdsDto createAdsDto,
+            @RequestPart(value = "properties") CreateAdsDto createAdsDto,
             @Parameter(description = "Изображение")
-            @RequestPart("image") MultipartFile file, Authentication authentication
+            @RequestPart(value = "image") MultipartFile file, Authentication authentication
     ) {
         logger.info("Добавление объявления: {}");
         Users users = userService.findIdUser(authentication.getName());
@@ -192,8 +194,14 @@ public class AdsController {
                                                           Authentication authentication) {
         Users users = userService.findIdUser(authentication.getName());
         List<Advert> adsList = adsService.getAdvertsByUserId(users.getId());
-        List<AdsDto> adsDtoList = adsList.stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(new ResponseWrapperAdsDto(adsDtoList.size(), adsDtoList));
+        if (!adsList.isEmpty()) {
+            List<AdsDto> adsDtoList = adsList.stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+            return ResponseEntity.ok(new ResponseWrapperAdsDto(adsDtoList.size(), adsDtoList));
+        } else {
+            ArrayList<AdsDto> defaultListEmptyAdsDto = new ArrayList<AdsDto>();
+            return ResponseEntity.ok(new ResponseWrapperAdsDto(defaultListEmptyAdsDto.size(), defaultListEmptyAdsDto));
+        }
+
     }
 
     /**
