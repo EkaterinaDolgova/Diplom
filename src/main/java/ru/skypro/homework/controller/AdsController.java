@@ -3,9 +3,11 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -32,7 +34,7 @@ import java.util.stream.Collectors;
 /**
  * Контроллер Объявления
  */
-
+@Slf4j
 @RestController
 @RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
@@ -86,12 +88,13 @@ public class AdsController {
      * Добавить объявления.
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @Operation(summary = "Добавить объявление", responses = {@ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<AdsDto> addAds(
             @Parameter(description = "Параметры объявления")
-            @RequestPart("properties") CreateAdsDto createAdsDto,
+            @RequestPart(value = "properties") CreateAdsDto createAdsDto,
             @Parameter(description = "Изображение")
-            @RequestPart("image") MultipartFile file, Authentication authentication
+            @RequestPart(value = "image") MultipartFile file, Authentication authentication
     ) {
         logger.info("Добавление объявления: {}");
         Users users = userService.findIdUser(authentication.getName());
@@ -193,8 +196,14 @@ public class AdsController {
                                                           Authentication authentication) {
         Users users = userService.findIdUser(authentication.getName());
         List<Advert> adsList = adsService.getAdvertsByUserId(users.getId());
-        List<AdsDto> adsDtoList = adsList.stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(new ResponseWrapperAdsDto(adsDtoList.size(), adsDtoList));
+        if (!adsList.isEmpty()) {
+            List<AdsDto> adsDtoList = adsList.stream().map(adsMapper::toAdsDTO).collect(Collectors.toList());
+            return ResponseEntity.ok(new ResponseWrapperAdsDto(adsDtoList.size(), adsDtoList));
+        } else {
+            ArrayList<AdsDto> defaultListEmptyAdsDto = new ArrayList<AdsDto>();
+            return ResponseEntity.ok(new ResponseWrapperAdsDto(defaultListEmptyAdsDto.size(), defaultListEmptyAdsDto));
+        }
+
     }
 
     /**
@@ -268,4 +277,9 @@ public class AdsController {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
         }
     }
+    /*@GetMapping(value = "/images/{id}/", produces = {MediaType.IMAGE_PNG_VALUE})
+    public byte[] getImage(@PathVariable Long id) {
+         Image image = imageRepository.findByAdvertId(id).orElseThrow();
+         return image.getImage();
+    }*/
 }

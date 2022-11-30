@@ -18,12 +18,12 @@ import java.util.Objects;
 
 
 public class ResponseWrapperAdsDto {
-    @JsonProperty("count")
-    private Integer count = null;
+    @JsonProperty()
+    private Integer count;
 
-    @JsonProperty("results")
+    @JsonProperty()
     @Valid
-    private List<AdsDto> results = null;
+    private List<AdsDto> results;
 
     public ResponseWrapperAdsDto(Integer count, List<AdsDto> results) {
         this.count = count;

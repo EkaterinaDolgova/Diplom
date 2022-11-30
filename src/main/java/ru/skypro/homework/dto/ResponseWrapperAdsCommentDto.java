@@ -16,9 +16,9 @@ import java.util.Objects;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-30T18:04:31.779Z[GMT]")
 
 public class ResponseWrapperAdsCommentDto {
-    @JsonProperty("count")
-    private Integer count = null;
-    @JsonProperty("results")
+    @JsonProperty()
+    private Integer count;
+    @JsonProperty()
     @Valid
     private List<AdsCommentDto> results = null;
 

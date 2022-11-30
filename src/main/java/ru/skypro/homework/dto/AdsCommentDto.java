@@ -25,10 +25,10 @@ public class AdsCommentDto {
     @JsonProperty("author")
     private Integer author;
 
-    @JsonProperty("createdAt")
+    @JsonProperty()
     private OffsetDateTime createdAt;
 
-    @JsonProperty("text")
+    @JsonProperty()
     private String text;
 
     public AdsCommentDto author(Integer author) {

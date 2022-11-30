@@ -11,14 +11,14 @@ import org.springframework.validation.annotation.Validated;
 
 
 public class CreateAdsDto {
-    @JsonProperty("description")
-    private String description = null;
+    @JsonProperty()
+    private String description;
 
-    @JsonProperty("price")
-    private Integer price = null;
+    @JsonProperty()
+    private Integer price;
 
-    @JsonProperty("title")
-    private String title = null;
+    @JsonProperty()
+    private String title;
 
     public CreateAdsDto(String description, Integer price, String title) {
         this.description = description;

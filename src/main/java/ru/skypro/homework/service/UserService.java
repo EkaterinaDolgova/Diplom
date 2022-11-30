@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.NewPasswordDto;
+import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.UsersNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
@@ -36,7 +37,7 @@ public class UserService {
      *
      * @return обновление пользователя.
      */
-    public Users updateUser(Users user, ImageService.UserDto userDto) {
+    public Users updateUser(Users user, UserDto userDto) {
         logger.info("Info updateUser");
         if (userDto.getFirstName() != null) {
             user.setFirstName(userDto.getFirstName());

@@ -18,13 +18,13 @@ import java.util.Objects;
 
 
 public class ResponseWrapperUserDto {
-    @JsonProperty("count")
-    private Integer count = null;
-    @JsonProperty("results")
+    @JsonProperty()
+    private Integer count;
+    @JsonProperty()
     @Valid
-    private List<ImageService.UserDto> results = null;
+    private List<UserDto> results;
 
-    public ResponseWrapperUserDto(Integer count, List<ImageService.UserDto> results) {
+    public ResponseWrapperUserDto(Integer count, List<UserDto> results) {
         this.count = count;
         this.results = results;
     }
@@ -49,14 +49,14 @@ public class ResponseWrapperUserDto {
         this.count = count;
     }
 
-    public ResponseWrapperUserDto results(List<ImageService.UserDto> results) {
+    public ResponseWrapperUserDto results(List<UserDto> results) {
         this.results = results;
         return this;
     }
 
-    public ResponseWrapperUserDto addResultsItem(ImageService.UserDto resultsItem) {
+    public ResponseWrapperUserDto addResultsItem(UserDto resultsItem) {
         if (this.results == null) {
-            this.results = new ArrayList<ImageService.UserDto>();
+            this.results = new ArrayList<UserDto>();
         }
         this.results.add(resultsItem);
         return this;
@@ -69,11 +69,11 @@ public class ResponseWrapperUserDto {
      **/
     @Schema(description = "")
     @Valid
-    public List<ImageService.UserDto> getResults() {
+    public List<UserDto> getResults() {
         return results;
     }
 
-    public void setResults(List<ImageService.UserDto> results) {
+    public void setResults(List<UserDto> results) {
         this.results = results;
     }
 
