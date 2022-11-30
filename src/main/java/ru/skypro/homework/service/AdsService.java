@@ -68,7 +68,7 @@ public class AdsService {
      */
     public List<Comment> getAdsComments(Integer ad_pk) {
         logger.info("Info getAdsComments Список комментариев");
-        return commentRepository.findCommentsByAdvert(adsRepository.findById(Long.valueOf(ad_pk)).get());
+        return commentRepository.findCommentsByAdvert(adsRepository.findById(Long.valueOf(ad_pk)).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено")));
     }
 
     /**
@@ -88,7 +88,7 @@ public class AdsService {
      */
     public Comment getAdsComment(Integer ad_pk, Integer id) {
         logger.info("Info getAdsComment Поиск комментария по ad_pk/id");
-        return commentRepository.findByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).get(), Long.valueOf(id)).orElseThrow(() -> new AdsNotFoundException("Комментарий не найден"));
+        return commentRepository.findByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено")), Long.valueOf(id)).orElseThrow(() -> new AdsNotFoundException("Комментарий не найден"));
     }
 
     /**
@@ -98,7 +98,7 @@ public class AdsService {
      */
     public Comment updateAdsComment(Integer ad_pk, Integer id, Comment comment_new) {
         logger.info("Info updateAdsComment Изменение Комментария у объявления");
-        Comment comment = commentRepository.findByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).get(), Long.valueOf(id)).orElseThrow(() -> new AdsNotFoundException("Комментарий не найден"));
+        Comment comment = commentRepository.findByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено")), Long.valueOf(id)).orElseThrow(() -> new AdsNotFoundException("Комментарий не найден"));
         comment.setText(comment_new.getText());
         comment.setCreatedAt(comment_new.getCreatedAt());
         return commentRepository.save(comment);
@@ -132,10 +132,10 @@ public class AdsService {
      */
     public Advert updateAds(Long id, Advert advert) {
         logger.info("Info updateAds");
-        Advert advert_ = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException("Объявления по id не найдено"));
-        advert_.setTitle(advert.getTitle());
-        advert_.setPrice(advert.getPrice());
-        return adsRepository.save(advert_);
+        Advert advertUpdate = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException("Объявления по id не найдено"));
+        advertUpdate.setTitle(advert.getTitle());
+        advertUpdate.setPrice(advert.getPrice());
+        return adsRepository.save(advertUpdate);
     }
 
     /**
@@ -145,9 +145,9 @@ public class AdsService {
      */
     public Advert updateAdsImage(Long id, String images) {
         logger.info("Info updateAdsImage");
-        Advert advert_ = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException("Объявления по id не найдено"));
-        advert_.setImage(images);
-        return adsRepository.save(advert_);
+        Advert advertUpdate = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException("Объявления по id не найдено"));
+        advertUpdate.setImage(images);
+        return adsRepository.save(advertUpdate);
     }
 
     /**
@@ -157,7 +157,7 @@ public class AdsService {
      */
     public List<Advert> getAdvertsByUserId(Long id) {
         logger.info("Info getAdsMe");
-        return adsRepository.findByUsers(id);//.orElseThrow(() -> new UsersNotFoundException("У данного пользователя нет объявлений"));
+        return adsRepository.findByUsersId(id);//.orElseThrow(() -> new UsersNotFoundException("У данного пользователя нет объявлений"));
     }
 
     /**

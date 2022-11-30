@@ -87,6 +87,7 @@ public class AdsController {
      * Добавить объявления.
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @Operation(summary = "Добавить объявление", responses = {@ApiResponse(responseCode = "200", description = "Список объявлений успешно получен"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<AdsDto> addAds(
             @Parameter(description = "Параметры объявления")
