@@ -3,6 +3,7 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 /**
  * Контроллер Объявления
  */
-
+@Slf4j
 @RestController
 @RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
@@ -276,4 +277,9 @@ public class AdsController {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
         }
     }
+    /*@GetMapping(value = "/images/{id}/", produces = {MediaType.IMAGE_PNG_VALUE})
+    public byte[] getImage(@PathVariable Long id) {
+         Image image = imageRepository.findByAdvertId(id).orElseThrow();
+         return image.getImage();
+    }*/
 }

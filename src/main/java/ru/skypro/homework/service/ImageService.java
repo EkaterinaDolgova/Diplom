@@ -80,6 +80,10 @@ public class ImageService {
             return baos.toByteArray();
         }
 
+        public Image getImageByAdvertId (Long id) {
+            return imageRepository.findByAdvertId(id).orElseThrow();
+        }
+
     /**
      * Создает новое изображение для объявления.
      *
