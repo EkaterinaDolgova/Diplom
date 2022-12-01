@@ -3,7 +3,9 @@ package ru.skypro.homework.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.entities.Image;
 import ru.skypro.homework.service.ImageService;
@@ -22,11 +24,16 @@ public class ImageController {
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
 
-    @GetMapping(value = "/{id}/", produces = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public byte[] getImage(@PathVariable Long id) {
+   /* @GetMapping(value = "/{id}/", produces = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    /*public byte[] getImage(@PathVariable Long id) {
         logger.info("Показ картинки: {}");
         Image image = imageService.getImageByAdvertId(id);
         return image.getImage();
-    }
+    public byte[] getImage(@PathVariable Long id) {
+        logger.info("Показ картинки: {}");
+        Image image = imageService.getImageById(id);
+        return image.getImage();
+    }*/
+
 
 }
