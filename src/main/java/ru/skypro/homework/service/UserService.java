@@ -1,7 +1,12 @@
 package ru.skypro.homework.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UserDto;
@@ -9,17 +14,23 @@ import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.UsersNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
+@Transactional
 @Service
 public class UserService {
 
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     /**
@@ -59,9 +70,24 @@ public class UserService {
      *
      * @return изменение пароля пользователя.
      */
-    public NewPasswordDto setPassword() {
-        logger.info("Info setPassword");
-        return new NewPasswordDto("currentPassword", "newPassword");
+    public ResponseEntity<NewPasswordDto> setPassword(NewPasswordDto passwordDto, Authentication authentification) {
+            log.info("Сервис установки пароля");
+            Optional<Users> optionalUser = userRepository.findByUsername(authentification.getName());
+            if (optionalUser.isEmpty()) {
+                log.info("Текущего пользователя не в БД");
+                return ResponseEntity.notFound().build();
+            }
+            log.info(passwordDto.getCurrentPassword());
+            log.info(optionalUser.get().getPassword());
+            if (passwordDto.getNewPassword().isEmpty() || !passwordEncoder.matches(passwordDto.getCurrentPassword(), optionalUser.get().getPassword())) {
+                log.info("Текущий пароль указан неверно");
+                return ResponseEntity.notFound().build();
+            }
+            Users user = optionalUser.get();
+            user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+            userRepository.save(user);
+            log.info("Пароль текущего пользователя обновлен");
+            return ResponseEntity.ok(passwordDto);
     }
 
     /**
