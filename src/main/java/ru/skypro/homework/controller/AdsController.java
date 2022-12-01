@@ -44,20 +44,27 @@ public class AdsController {
     private final ImageService imageService;
     private final AdsCommentMapper adsCommentMapper;
     private final UserService userService;
+
+    private final FullAdsDtoMapper fullAdsDtoMapper;
+
+    private final CreateAdsDtoMapper createAdsDtoMapper;
     private final CommentRepository commentRepository;
     private final AuthService authService;
     private final ImageRepository imageRepository;
 
 
-    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService, CommentRepository commentRepository, AuthService authService, ImageRepository imageRepository) {
+    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService, FullAdsDtoMapper fullAdsDtoMapper, CreateAdsDtoMapper createAdsDtoMapper, CommentRepository commentRepository, AuthService authService, ImageRepository imageRepository) {
         this.adsService = adsService;
         this.adsMapper = adsMapper;
         this.imageService = imageService;
         this.adsCommentMapper = adsCommentMapper;
         this.userService = userService;
+        this.fullAdsDtoMapper = fullAdsDtoMapper;
+        this.createAdsDtoMapper = createAdsDtoMapper;
         this.commentRepository = commentRepository;
         this.authService = authService;
         this.imageRepository = imageRepository;
+
     }
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
@@ -98,11 +105,11 @@ public class AdsController {
     ) {
         logger.info("Добавление объявления: {}");
         Users users = userService.findIdUser(authentication.getName());
-        Advert advert = adsMapper.createAdsDtoToAds(createAdsDto);
+        Advert advert = createAdsDtoMapper.createAdsDtoToAds(createAdsDto);
         advert.setUsers(users);
         Advert adsCreated = adsService.addAds(advert);
 
-        String imageId = imageService.uploadImage(adsCreated, file);
+        String imageId = imageService.createImage(adsCreated, file);
         AdsDto adsDto = adsMapper.toAdsDTO(adsCreated);
         adsDto.setImage("/ads/image/" + imageId);
 
@@ -113,11 +120,22 @@ public class AdsController {
         return ResponseEntity.ok(adsDto);
     }
 
+    @GetMapping(value = "/image/{id}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    /*public byte[] getImage(@PathVariable Long id) {
+        logger.info("Показ картинки: {}");
+        Image image = imageService.getImageByAdvertId(id);
+        return image.getImage();*/
+    public byte[] getImage(@PathVariable Long id) {
+        logger.info("Показ картинки: {}");
+        Image image = imageService.getImageById(id);
+        return image.getImage();
+    }
+
     /**
      * Возвращает список комментариев по ad_pk .
      */
     @Operation(summary = "Возвращает список комментариев по ad_pk", responses = {@ApiResponse(responseCode = "200", description = "ОК"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    @GetMapping("/{ad_pk}/comment")
+    @GetMapping("/{ad_pk}/comments")
     public ResponseEntity<ResponseWrapperAdsCommentDto> getAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk) {
         List<Comment> comments = adsService.getAdsComments(ad_pk);
         List<AdsCommentDto> adsCommentDtoList = comments.stream().map(adsCommentMapper::toCommentDTO).collect(Collectors.toList());
@@ -129,7 +147,7 @@ public class AdsController {
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Создание комментариев по ad_pk", responses = {@ApiResponse(responseCode = "200", description = "ОК"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    @PostMapping("/{ad_pk}/comment")
+    @PostMapping("/{ad_pk}/comments")
     public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @RequestBody AdsCommentDto adsCommentDto) {
 
         return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto)));
@@ -140,7 +158,7 @@ public class AdsController {
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Удаление комментария по id .", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    @DeleteMapping("/{ad_pk}/comment/{id}")
+    @DeleteMapping("/{ad_pk}/comments/{id}")
     public void deleteAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @PathVariable Integer id, Authentication authentication) {
         Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
@@ -159,7 +177,7 @@ public class AdsController {
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Поиск комментария по id .", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    @GetMapping("/{ad_pk}/comment/{id}")
+    @GetMapping("/{ad_pk}/comments/{id}")
     public Comment getAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @PathVariable Integer id) {
         return adsService.getAdsComment(ad_pk, id);
     }
@@ -169,7 +187,7 @@ public class AdsController {
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Изменение комментария по id .", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенно"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    @PatchMapping("/{ad_pk}/comment/{id}")
+    @PatchMapping("/{ad_pk}/comments/{id}")
     public Comment updateAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @PathVariable Integer id, @RequestBody Comment comment, Authentication authentication) {
         Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
@@ -219,6 +237,7 @@ public class AdsController {
         Set<Long> idAdvert = adsService.findAdvertIdUser(users.getId());
         //Если выбранное объявление создано пользователем, то можно удалять
         if (idAdvert.contains(id) || userRole.equals("ADMIN")) {
+            imageService.deleteByAdvertId(id);
             adsService.removeAds(id);
             return ResponseEntity.ok().body(HttpStatus.OK);
         } else {
@@ -229,12 +248,23 @@ public class AdsController {
     /**
      * Поиск объявление по id .
      */
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    @Operation(summary = "Поиск объявление по id.", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенно"), @ApiResponse(responseCode = "404", description = "Не найдено")})
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+   /* @Operation(summary = "Поиск объявление по id.", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенно"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @GetMapping("/{id}")
     public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Long id) {
         Advert advert = adsService.getAds(id);
         return adsMapper.toAdsDTO(advert);
+    }*/
+    @GetMapping("{id}")
+    public ResponseEntity<FullAdsDto> getAds(
+            @Parameter(description = "ID объявления")
+            @PathVariable("id") Long id
+    ) {
+        logger.info("Получение объявления {}", id);
+
+        Advert advert = adsService.getAdvertBiId(id);
+
+        return ResponseEntity.ok(fullAdsDtoMapper.adsToFullAdsDto(advert));
     }
 
     /**
@@ -262,7 +292,7 @@ public class AdsController {
      * Изменение картинки в объявлении .
      */
     @Operation(summary = "Обновить картинки объявлений", responses = {@ApiResponse(responseCode = "200", description = "Картинки успешно загружена"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{id}/image", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestParam MultipartFile image, Authentication authentication) throws Exception {
         Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());

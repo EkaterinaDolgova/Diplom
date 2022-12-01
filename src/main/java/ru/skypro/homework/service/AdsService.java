@@ -39,6 +39,12 @@ public class AdsService {
         return adsRepository.findAll();
     }
 
+    public Advert getAdvertBiId(Long id) {
+        logger.info("Поиск объявления по id");
+        //System.out.println(adsRepository.findAll());
+        return adsRepository.findById(id).orElseThrow();
+    }
+
     /**
      * Возвращает объявления по наименованию.
      *

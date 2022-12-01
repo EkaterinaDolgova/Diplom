@@ -80,9 +80,11 @@ public class ImageService {
             return baos.toByteArray();
         }
 
-        public Image getImageByAdvertId (Long id) {
+        private Image getImageByAdvertId (Long id) {
             return imageRepository.findByAdvertId(id).orElseThrow();
         }
+
+        public Image getImageById(Long id) {return imageRepository.findById(id).orElseThrow();}
 
     /**
      * Создает новое изображение для объявления.
@@ -96,9 +98,15 @@ public class ImageService {
             throw new AdsNotFoundException("Failed to extract image contents");
         }
 
-        Image image = imageRepository.findById(advert.getId()).get();
+        Image image = new Image();
+        //Image image = imageRepository.findById(advert.getId()).get();
+        image.setAdvert(advert);
         image.setImage(imageContent);
 
         return imageRepository.save(image).getId().toString();
+    }
+
+    public void deleteByAdvertId(Long id) {
+        imageRepository.delete(getImageByAdvertId(id));
     }
 }

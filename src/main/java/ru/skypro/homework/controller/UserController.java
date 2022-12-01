@@ -77,7 +77,7 @@ public class UserController {
     /**
      * Изменение Пароля User.
      */
-    @Operation(
+   /* @Operation(
             summary = "Изменение Пароля User",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Успешно"),
@@ -89,6 +89,14 @@ public class UserController {
     @PatchMapping("/users/set_password")
     public ResponseEntity<NewPasswordDto> setPassword() {
         return ResponseEntity.ok(userService.setPassword());
+    }*/
+    @PostMapping("/users/set_password")
+    public ResponseEntity<NewPasswordDto> setPassword(@Valid @RequestBody NewPasswordDto passwordDto, Authentication auth) {
+        logger.info("метод установки пользователю нового пароля");
+        // метод сервиса еще не дописан
+        //если мы передаем аутентификацию в контроллер, то она автоматом берется из контекста?
+        // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return userService.setPassword(passwordDto, auth);
     }
 
     /**

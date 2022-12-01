@@ -30,8 +30,10 @@ public class Advert {
     @JoinColumn(name = "users")
     @JsonIgnore
     private Users users;
+
     private String image;
 
+    private String description;
     private Integer price;
     private String title;
     @OneToMany
