@@ -72,10 +72,10 @@ public class UserService {
      * @return изменение пароля пользователя.
      */
     public ResponseEntity<NewPasswordDto> setPassword(NewPasswordDto passwordDto, Authentication authentification) {
-        log.info("Сервис установки пароля");
+        log.info("Установка пароля");
         Optional<Users> optionalUser = userRepository.findByUsername(authentification.getName());
         if (optionalUser.isEmpty()) {
-            log.info("Текущего пользователя не в БД");
+            log.info("Текущий пользоватеь не в БД");
             return ResponseEntity.notFound().build();
         }
         log.info(passwordDto.getCurrentPassword());
@@ -87,8 +87,7 @@ public class UserService {
         if (prefix.equals(ENCRYPTION_PREFIX)) {
             ecryptedPasswordWithoutEncryptionType = encryptedPassword.substring(ENCRYPTION_PREFIX.length());
         }
-        if (passwordDto.getNewPassword().isEmpty() || !passwordEncoder.matches(passwordDto.getCurrentPassword(),
-                                                        ecryptedPasswordWithoutEncryptionType)) {
+        if (passwordDto.getNewPassword().isEmpty() || !passwordEncoder.matches(passwordDto.getCurrentPassword(), ecryptedPasswordWithoutEncryptionType)) {
             log.info("Текущий пароль указан неверно");
             return ResponseEntity.notFound().build();
         }
