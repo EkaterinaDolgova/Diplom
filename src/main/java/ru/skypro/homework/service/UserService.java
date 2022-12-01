@@ -23,6 +23,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    private static final String ENCRYPTION_PREFIX = "{bcrypt}";
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
@@ -71,23 +72,31 @@ public class UserService {
      * @return изменение пароля пользователя.
      */
     public ResponseEntity<NewPasswordDto> setPassword(NewPasswordDto passwordDto, Authentication authentification) {
-            log.info("Сервис установки пароля");
-            Optional<Users> optionalUser = userRepository.findByUsername(authentification.getName());
-            if (optionalUser.isEmpty()) {
-                log.info("Текущего пользователя не в БД");
-                return ResponseEntity.notFound().build();
-            }
-            log.info(passwordDto.getCurrentPassword());
-            log.info(optionalUser.get().getPassword());
-            if (passwordDto.getNewPassword().isEmpty() || !passwordEncoder.matches(passwordDto.getCurrentPassword(), optionalUser.get().getPassword())) {
-                log.info("Текущий пароль указан неверно");
-                return ResponseEntity.notFound().build();
-            }
-            Users user = optionalUser.get();
-            user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
-            userRepository.save(user);
-            log.info("Пароль текущего пользователя обновлен");
-            return ResponseEntity.ok(passwordDto);
+        log.info("Сервис установки пароля");
+        Optional<Users> optionalUser = userRepository.findByUsername(authentification.getName());
+        if (optionalUser.isEmpty()) {
+            log.info("Текущего пользователя не в БД");
+            return ResponseEntity.notFound().build();
+        }
+        log.info(passwordDto.getCurrentPassword());
+        log.info(optionalUser.get().getPassword());
+
+        String encryptedPassword = optionalUser.get().getPassword();
+        String prefix = encryptedPassword.substring(0, ENCRYPTION_PREFIX.length());
+        String ecryptedPasswordWithoutEncryptionType = encryptedPassword;
+        if (prefix.equals(ENCRYPTION_PREFIX)) {
+            ecryptedPasswordWithoutEncryptionType = encryptedPassword.substring(ENCRYPTION_PREFIX.length());
+        }
+        if (passwordDto.getNewPassword().isEmpty() || !passwordEncoder.matches(passwordDto.getCurrentPassword(),
+                                                        ecryptedPasswordWithoutEncryptionType)) {
+            log.info("Текущий пароль указан неверно");
+            return ResponseEntity.notFound().build();
+        }
+        Users user = optionalUser.get();
+        user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+        userRepository.save(user);
+        log.info("Пароль текущего пользователя обновлен");
+        return ResponseEntity.ok(passwordDto);
     }
 
     /**
