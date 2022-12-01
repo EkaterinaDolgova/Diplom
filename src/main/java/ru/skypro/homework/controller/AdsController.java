@@ -48,12 +48,11 @@ public class AdsController {
     private final FullAdsDtoMapper fullAdsDtoMapper;
 
     private final CreateAdsDtoMapper createAdsDtoMapper;
-    private final CommentRepository commentRepository;
-    private final AuthService authService;
-    private final ImageRepository imageRepository;
 
 
-    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService, FullAdsDtoMapper fullAdsDtoMapper, CreateAdsDtoMapper createAdsDtoMapper, CommentRepository commentRepository, AuthService authService, ImageRepository imageRepository) {
+
+    public AdsController(AdsService adsService, AdsMapper adsMapper, ImageService imageService, AdsCommentMapper adsCommentMapper, UserService userService,
+                         FullAdsDtoMapper fullAdsDtoMapper, CreateAdsDtoMapper createAdsDtoMapper) {
         this.adsService = adsService;
         this.adsMapper = adsMapper;
         this.imageService = imageService;
@@ -61,9 +60,6 @@ public class AdsController {
         this.userService = userService;
         this.fullAdsDtoMapper = fullAdsDtoMapper;
         this.createAdsDtoMapper = createAdsDtoMapper;
-        this.commentRepository = commentRepository;
-        this.authService = authService;
-        this.imageRepository = imageRepository;
 
     }
 
@@ -248,13 +244,6 @@ public class AdsController {
     /**
      * Поиск объявление по id .
      */
-    //@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-   /* @Operation(summary = "Поиск объявление по id.", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенно"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    @GetMapping("/{id}")
-    public AdsDto getAds(@Parameter(description = "id объявления") @PathVariable Long id) {
-        Advert advert = adsService.getAds(id);
-        return adsMapper.toAdsDTO(advert);
-    }*/
     @GetMapping("{id}")
     public ResponseEntity<FullAdsDto> getAds(
             @Parameter(description = "ID объявления")
@@ -292,7 +281,7 @@ public class AdsController {
      * Изменение картинки в объявлении .
      */
     @Operation(summary = "Обновить картинки объявлений", responses = {@ApiResponse(responseCode = "200", description = "Картинки успешно загружена"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
-    @PatchMapping(value = "/{id}/image", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PatchMapping(value = "/{id}/image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestParam MultipartFile image, Authentication authentication) throws Exception {
         Users users = userService.findIdUser(authentication.getName());
         String userRole = adsService.findIdUserRole(authentication.getName());
@@ -307,9 +296,4 @@ public class AdsController {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
         }
     }
-    /*@GetMapping(value = "/images/{id}/", produces = {MediaType.IMAGE_PNG_VALUE})
-    public byte[] getImage(@PathVariable Long id) {
-         Image image = imageRepository.findByAdvertId(id).orElseThrow();
-         return image.getImage();
-    }*/
 }
