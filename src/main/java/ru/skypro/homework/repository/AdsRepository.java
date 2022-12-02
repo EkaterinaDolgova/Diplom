@@ -2,28 +2,16 @@ package ru.skypro.homework.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.core.userdetails.User;
 import ru.skypro.homework.entities.Advert;
+import ru.skypro.homework.entities.Users;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AdsRepository extends JpaRepository<Advert, Long> {
-
-    Advert getById(Long id);
-
-    Advert findAdvertById(Long id);
-
-    List<Advert> getAdvertsByUsers(Integer id);
-
-    void deleteById(Long id);
-
-    Advert getByTitleLikeIgnoreCase(String title);
-
-    default String addAds() {
-        return null;
-    }
-
-    // @Query(value = "Select * from advert where title like '%'||:name||'%'  ORDER BY id DESC  LIMIT 5 ", nativeQuery = true)
-    List<Advert> findAdsByTitleContaining(String name) ;
-
+    Optional<Advert> findById(Long id);
+    List <Advert> findByUsersId(Long id);
+    List<Advert> findByTitleContaining(String title) ;
 
 }

@@ -13,14 +13,14 @@ public class FullAdsDto {
     private String email;
     private String phone;
     private String image;
-    private Integer pk;
+    private Long pk;
     private Integer price;
     private String title;
 
     public FullAdsDto(){}
 
     public FullAdsDto(String authorFirstName, String authorLastName, String description, String email,
-                      String phone, String image, int pk, int price, String title) {
+                      String phone, String image, long pk, int price, String title) {
         this.authorFirstName = authorFirstName;
         this.authorLastName = authorLastName;
         this.description = description;
@@ -56,7 +56,7 @@ public class FullAdsDto {
         return image;
     }
 
-    public Integer getPk() {
+    public Long getPk() {
         return pk;
     }
 
@@ -92,7 +92,7 @@ public class FullAdsDto {
         this.phone = phone;
     }
 
-    public void setPk(Integer pk) {
+    public void setPk(Long pk) {
         this.pk = pk;
     }
 

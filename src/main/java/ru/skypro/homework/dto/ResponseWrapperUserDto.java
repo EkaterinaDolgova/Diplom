@@ -3,7 +3,7 @@ package ru.skypro.homework.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import ru.skypro.homework.entities.Users;
+import ru.skypro.homework.service.ImageService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -18,11 +18,11 @@ import java.util.Objects;
 
 
 public class ResponseWrapperUserDto {
-    @JsonProperty("count")
-    private Integer count = null;
-    @JsonProperty("results")
+    @JsonProperty()
+    private Integer count;
+    @JsonProperty()
     @Valid
-    private List<UserDto> results = null;
+    private List<UserDto> results;
 
     public ResponseWrapperUserDto(Integer count, List<UserDto> results) {
         this.count = count;

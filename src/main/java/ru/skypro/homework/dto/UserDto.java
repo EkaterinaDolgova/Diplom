@@ -11,23 +11,33 @@ import java.util.Objects;
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-29T09:53:39.743Z[GMT]")
-
-
 public class UserDto {
-    @JsonProperty("email")
-    private String email = null;
+    @JsonProperty()
+    private String email;
 
-    @JsonProperty("firstName")
-    private String firstName = null;
+    @JsonProperty()
+    private String firstName;
 
-    @JsonProperty("id")
-    private Long id = null;
+    @JsonProperty()
+    private Long id;
 
-    @JsonProperty("lastName")
-    private String lastName = null;
+    @JsonProperty()
+    private String lastName;
 
-    @JsonProperty("phone")
-    private String phone = null;
+    @JsonProperty()
+    private String phone;
+
+    @JsonProperty()
+    private String role;
+
+    @JsonProperty()
+    private String username;
+
+    @JsonProperty()
+    private String password;
+
+    @JsonProperty()
+    private Boolean enabled;
 
     public UserDto email(String email) {
         this.email = email;
@@ -131,7 +141,7 @@ public class UserDto {
 
 
     @Override
-    public boolean equals(java.lang.Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -145,7 +155,65 @@ public class UserDto {
                 Objects.equals(this.lastName, user.lastName) &&
                 Objects.equals(this.phone, user.phone);
     }
+    /**
+     * Get username
+     *
+     * @return username
+     **/
+    @Schema(description = "")
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * Get role
+     *
+     * @return role
+     **/
+    @Schema(description = "")
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    /**
+     * Get password
+     *
+     * @return password
+     **/
+    @Schema(description = "")
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return enabled
+     **/
+    @Schema(description = "")
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(email, firstName, id, lastName, phone);
@@ -155,7 +223,6 @@ public class UserDto {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class User {\n");
-
         sb.append("    email: ").append(toIndentedString(email)).append("\n");
         sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
@@ -169,7 +236,7 @@ public class UserDto {
      * Convert the given object to string with each line indented by 4 spaces
      * (except the first line).
      */
-    private String toIndentedString(java.lang.Object o) {
+    private String toIndentedString(Object o) {
         if (o == null) {
             return "null";
         }

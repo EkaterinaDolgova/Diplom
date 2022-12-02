@@ -1,15 +1,22 @@
 package ru.skypro.homework.entities;
-import  javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
-
 
 /**
  * Класс Отзыв
  */
-
 @Entity
+@Getter
+@Setter
 @Table(name = "comment")
+@AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,70 +31,10 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "advert_id")
+    @JsonIgnore
     private Advert advert;
 
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
-    }
-
-    public Advert getAdvert(){
-        return this.advert;
-    }
-
-    public Comment(Long id, Integer users, OffsetDateTime createdAt, String text) {
-        this.id = id;
-        this.users = users;
-        this.createdAt = createdAt;
-        this.text = text;
-    }
-
     public Comment() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getUsers() {
-        return users;
-    }
-
-    public void setUsers(Integer users) {
-        this.users = users;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id) && Objects.equals(users, comment.users) && Objects.equals(createdAt, comment.createdAt) && Objects.equals(text, comment.text);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, users, createdAt, text);
     }
 
     @Override

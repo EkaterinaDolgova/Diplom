@@ -1,4 +1,5 @@
 package ru.skypro.homework.dto;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.validation.annotation.Validated;
 
@@ -10,23 +11,45 @@ import org.springframework.validation.annotation.Validated;
 
 
 public class CreateAdsDto {
-    @JsonProperty("description")
-    private String description = null;
+    @JsonProperty()
+    private String description;
 
-    @JsonProperty("image")
-    private String image = null;
+    @JsonProperty()
+    private Integer price;
 
-    @JsonProperty("pk")
-    private Integer pk = null;
+    @JsonProperty()
+    private String title;
 
-    @JsonProperty("price")
-    private Integer price = null;
-
-    @JsonProperty("title")
-    private String title = null;
-
-    public CreateAdsDto description(String description) {
+    public CreateAdsDto(String description, Integer price, String title) {
         this.description = description;
-        return this;
+        this.price = price;
+        this.title = title;
+    }
+
+    public CreateAdsDto() {
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

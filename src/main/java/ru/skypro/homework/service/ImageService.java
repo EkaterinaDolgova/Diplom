@@ -1,30 +1,33 @@
 package ru.skypro.homework.service;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.ImageUtility;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Image;
 import ru.skypro.homework.exception.AdsNotFoundException;
+import ru.skypro.homework.exception.FailedExtractImageException;
+import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.ImageRepository;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
-import static io.swagger.v3.core.util.AnnotationsUtils.getExtensions;
+import java.util.Objects;
+import java.util.Optional;
+
+import static com.datical.liquibase.ext.init.InitProjectUtil.getExtension;
+
 
 @Service
 public class ImageService {
     Logger logger = LoggerFactory.getLogger(ImageService.class);
-    @Value("images")
-    private String imagesDir;
     private final ImageRepository imageRepository;
     private final AdsRepository adsRepository;
 
@@ -34,65 +37,79 @@ public class ImageService {
     }
     /**
      * Загружаем картинки.
-     *
      * @return загрузка картинок.
      */
-   public void uploadImage(Advert ads, MultipartFile file) throws Exception {
-       logger.info("Вызван метод uploadImage");
-       Path pathFile = Path.of(imagesDir, ads.getTitle() + "." + getExtension(file.getOriginalFilename()));
-       Files.createDirectories(pathFile.getParent());
-       Files.deleteIfExists(pathFile);
 
-       try (InputStream is = file.getInputStream();
-            OutputStream out = Files.newOutputStream(pathFile, CREATE_NEW);
-            BufferedInputStream bis = new BufferedInputStream(is, 1024);
-            BufferedOutputStream bout = new BufferedOutputStream(out, 1024)) {
-           bis.transferTo(bout);
-       }
-       Image image = new Image();
-       image.setAdvert(ads);
-       image.setFilePath(pathFile.toString());
-       image.setFileSize(file.getSize());
-       image.setMediaType(file.getContentType());
-       image.setData(file.getBytes());
-       imageRepository.save(image);
-    }
-    /**
-     * Обновляем картинки.
-     *
-     * @return загрузка новой картинки.
-     */
-    public void updateImage (Long advertId, MultipartFile imageFile) throws IOException {
-        Advert advert = adsRepository.findById(advertId).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено"));
-        Path filePath = Path.of(imagesDir, advert.getId() + "." + getExtension(imageFile.getOriginalFilename()));
-        Files.createDirectories(filePath.getParent());
-        Files.deleteIfExists(filePath);
-        try (
-                InputStream is = imageFile.getInputStream();
-                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-                BufferedInputStream bis = new BufferedInputStream(is, 1024);
-                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
-        ) {
-            bis.transferTo(bos);
+    public String uploadImage(Advert advert, MultipartFile file) {
+            byte[] imageContent;
+            try {
+                imageContent = getImageContent(file);
+            } catch (IOException e) {
+                throw new FailedExtractImageException("Failed to extract image contents");
+            }
+            Optional<Image> opImage = imageRepository.findByAdvertId(advert.getId());
+            Image image = opImage.orElseThrow(()->new ImageNotFoundException("Изобразжение не найдено"));
+            //image.setAdvert(advert);
+            image.setImage(imageContent);
+
+            return imageRepository.save(image).getId().toString();
         }
-        Image image = findAdvertImage(advertId);
+
+        /**
+         * Возвращает содержимое изображения.
+         * @return содержимое изображения.
+         */
+        private byte[] getImageContent(MultipartFile file) throws IOException {
+            String contentType = file.getContentType();
+            String fileNameOriginal = file.getOriginalFilename();
+            String ext = getExtension(fileNameOriginal);
+
+            byte[] imageByte = file.getBytes();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayInputStream bais = new ByteArrayInputStream(imageByte);
+
+            BufferedImage imgIn = ImageIO.read(bais);
+            if (imgIn == null) {
+                return null;
+            }
+
+            double height = imgIn.getHeight() / (imgIn.getWidth() / 250d);
+            BufferedImage imgOut = new BufferedImage(250, (int) height, imgIn.getType());
+            Graphics2D graphics = imgOut.createGraphics();
+            graphics.drawImage((BufferedImage) imgIn, 0, 0, 250, (int) height, null);
+            graphics.dispose();
+
+            ImageIO.write(imgOut, ext, baos);
+
+            return baos.toByteArray();
+        }
+
+        private Image getImageByAdvertId (Long id) {
+            return imageRepository.findByAdvertId(id).orElseThrow();
+        }
+
+        public Image getImageById(Long id) {return imageRepository.findById(id).orElseThrow();}
+
+    /**
+     * Создает новое изображение для объявления.
+     *
+     */
+    public String createImage(Advert advert, MultipartFile file) {
+        byte[] imageContent;
+        try {
+            imageContent = ImageUtility.getImageContent(file);
+        } catch (IOException e) {
+            throw new FailedExtractImageException("Failed to extract image contents");
+        }
+
+        Image image = new Image();
         image.setAdvert(advert);
-        image.setFilePath(filePath.toString());
-        image.setFileSize(imageFile.getSize());
-        image.setMediaType(imageFile.getContentType());
-        image.setData(imageFile.getBytes());
-        adsRepository.save(advert);
-        logger.info("Info updateImage");
-    }
-    public Image findAdvertImage(long advert_id) {
-        logger.info("Info findAdvertImage");
-        return imageRepository.findByAdvertId(advert_id).orElse(new Image());
+        image.setImage(imageContent);
+
+        return imageRepository.save(image).getId().toString();
     }
 
-    private String getExtension(String fileName) {
-        logger.info("Info getExtensions");
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    public void deleteByAdvertId(Long id) {
+        imageRepository.delete(getImageByAdvertId(id));
     }
-
-
 }

@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class AuthorizedUserNotFoundException extends RuntimeException{
-    public AuthorizedUserNotFoundException(String s) {
-        super(s);
-    }
+public class UsersNotFoundException extends RuntimeException {
+        public UsersNotFoundException(String s) {
+            super(s);
+        }
 }
