@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 
 @Data
 public class CreateAdsDto {
+
     private String description;
     private Integer price;
     private String title;
