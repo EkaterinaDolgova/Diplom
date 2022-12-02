@@ -36,26 +36,26 @@ public class UserController {
     }
 
     /**
-     * Получить весь список пользователей
+     * Вывод профиля пользователя.
      */
     @Operation(
-            summary = "Получить список User's",
+            summary = "выводим профиль пользователя",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Список успешно получен"),
-                    @ApiResponse(responseCode = "401", description = "Неавторизованный"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
-                    @ApiResponse(responseCode = "404", description = "Не найдено")
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorised"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/users/me")
-    public ResponseEntity<ResponseWrapperUserDto> getUsers() {
-        List<UserDto> userDtoList = userService.getUsers().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(new ResponseWrapperUserDto(userDtoList.size(), userDtoList));
+    public ResponseEntity<UserDto> getUsersMe(Authentication authentification) {
+        logger.info("вывод авторизовавшегося пользователя пользователя");
+        return userService.getMe(authentification);
     }
 
     /**
-     * Изменение Пароля User.
+     * Изменение User.
      */
     @Operation(
             summary = "Изменение User",
@@ -77,7 +77,7 @@ public class UserController {
     /**
      * Изменение Пароля User.
      */
-   /* @Operation(
+    @Operation(
             summary = "Изменение Пароля User",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Успешно"),
@@ -86,10 +86,7 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Не найдено")
             }
     )
-    @PatchMapping("/users/set_password")
-    public ResponseEntity<NewPasswordDto> setPassword() {
-        return ResponseEntity.ok(userService.setPassword());
-    }*/
+
     @PostMapping("/users/set_password")
     public ResponseEntity<NewPasswordDto> setPassword(@Valid @RequestBody NewPasswordDto passwordDto, Authentication auth) {
         logger.info("метод установки пользователю нового пароля");
@@ -135,21 +132,4 @@ public class UserController {
 
     }
 
-    /**
-     * Загрузка картинки Users.
-     */
-    @Operation(
-            summary = "Загрузка картинки Users",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Успешно"),
-                    @ApiResponse(responseCode = "204", description = "Нет соединения"),
-                    @ApiResponse(responseCode = "403", description = "Запрещенный"),
-                    @ApiResponse(responseCode = "404", description = "Не найдено")
-            }
-    )
-    @PatchMapping("/users/me/image")
-    public ResponseEntity<UserDto> UpdateUserImage(@Valid @RequestPart(name = "properties") UserDto userDto,
-                                                                @RequestPart("image") MultipartFile file) {
-        return null;
-    }
 }

@@ -11,8 +11,7 @@ import java.util.Optional;
 
 public interface AdsRepository extends JpaRepository<Advert, Long> {
     Optional<Advert> findById(Long id);
-    List findByUsersId(Long id);
-  //  List findByUsers(User user);
+    List <Advert> findByUsersId(Long id);
     List<Advert> findByTitleContaining(String title) ;
 
 }

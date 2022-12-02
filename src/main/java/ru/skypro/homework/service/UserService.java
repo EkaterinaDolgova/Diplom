@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.UserMapper;
 import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.UsersNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
@@ -28,10 +29,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final UserMapper userMapper;
+
     private static final String ENCRYPTION_PREFIX = "{bcrypt}";
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -43,6 +47,13 @@ public class UserService {
     public List<Users> getUsers() {
         logger.info("Info getUsers Список пользователей");
         return userRepository.findAll();
+    }
+
+    public ResponseEntity<UserDto> getMe(Authentication auth) {
+        logger.info("Сервис получения авторизовавшегося пользователя");
+        Users user = userRepository.findByUsername(auth.getName()).orElseThrow();
+        UserDto userDto = userMapper.toUserDTO(user);
+        return ResponseEntity.ok(userDto);
     }
 
     /**

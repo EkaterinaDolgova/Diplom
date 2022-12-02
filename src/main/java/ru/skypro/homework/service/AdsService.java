@@ -5,12 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Comment;
+import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.exception.AuthorizedUserNotFoundException;
-import ru.skypro.homework.exception.UsersNotFoundException;
+import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.CommentRepository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,8 +43,7 @@ public class AdsService {
 
     public Advert getAdvertBiId(Long id) {
         logger.info("Поиск объявления по id");
-        //System.out.println(adsRepository.findAll());
-        return adsRepository.findById(id).orElseThrow();
+        return adsRepository.findById(id).orElseThrow(()->new AdsNotFoundException("Объявление не найдено"));
     }
 
     /**
@@ -52,8 +53,8 @@ public class AdsService {
      */
     public List<Advert> getAllAdsName(String name) {
         logger.info("Info getAllAds - Все объявления по наименованию");
-        List<Advert> adverts1 = adsRepository.findByTitleContaining(name);
-        return adverts1;
+        List<Advert> adverts = adsRepository.findByTitleContaining(name);
+        return adverts;
     }
 
     /**
@@ -104,7 +105,7 @@ public class AdsService {
      */
     public Comment updateAdsComment(Integer ad_pk, Integer id, Comment comment_new) {
         logger.info("Info updateAdsComment Изменение Комментария у объявления");
-        Comment comment = commentRepository.findByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено")), Long.valueOf(id)).orElseThrow(() -> new AdsNotFoundException("Комментарий не найден"));
+        Comment comment = commentRepository.findByAdvertAndId(adsRepository.findById(Long.valueOf(ad_pk)).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено")), Long.valueOf(id)).orElseThrow(() -> new CommentNotFoundException("Комментарий не найден"));
         comment.setText(comment_new.getText());
         comment.setCreatedAt(comment_new.getCreatedAt());
         return commentRepository.save(comment);
@@ -163,7 +164,7 @@ public class AdsService {
      */
     public List<Advert> getAdvertsByUserId(Long id) {
         logger.info("Info getAdsMe");
-        return adsRepository.findByUsersId(id);//.orElseThrow(() -> new UsersNotFoundException("У данного пользователя нет объявлений"));
+        return adsRepository.findByUsersId(id);
     }
 
     /**
@@ -171,11 +172,14 @@ public class AdsService {
      *
      * @return создание комментария.
      */
-    public Comment addComment(Integer ad_pk, Comment comment) {
+    public Comment addComment(Integer ad_pk, Comment comment, String userName) {
         logger.info("Info addComment Добавление комментария");
+        Users user = userService.findIdUser(userName);
         Advert advert = adsRepository.findById(Long.valueOf(ad_pk)).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено"));
         logger.info("Advert", advert);
         comment.setAdvert(advert);
+        comment.setCreatedAt(OffsetDateTime.now());
+        comment.setUsers(Math.toIntExact(user.getId()));
         return commentRepository.save(comment);
     }
 

@@ -11,6 +11,8 @@ import ru.skypro.homework.ImageUtility;
 import ru.skypro.homework.entities.Advert;
 import ru.skypro.homework.entities.Image;
 import ru.skypro.homework.exception.AdsNotFoundException;
+import ru.skypro.homework.exception.FailedExtractImageException;
+import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.ImageRepository;
 import javax.imageio.ImageIO;
@@ -18,6 +20,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.datical.liquibase.ext.init.InitProjectUtil.getExtension;
 
@@ -42,10 +45,11 @@ public class ImageService {
             try {
                 imageContent = getImageContent(file);
             } catch (IOException e) {
-                throw new AdsNotFoundException("Failed to extract image contents");
+                throw new FailedExtractImageException("Failed to extract image contents");
             }
-            Image image = new Image();
-            image.setAdvert(advert);
+            Optional<Image> opImage = imageRepository.findByAdvertId(advert.getId());
+            Image image = opImage.orElseThrow(()->new ImageNotFoundException("Изобразжение не найдено"));
+            //image.setAdvert(advert);
             image.setImage(imageContent);
 
             return imageRepository.save(image).getId().toString();
@@ -95,11 +99,10 @@ public class ImageService {
         try {
             imageContent = ImageUtility.getImageContent(file);
         } catch (IOException e) {
-            throw new AdsNotFoundException("Failed to extract image contents");
+            throw new FailedExtractImageException("Failed to extract image contents");
         }
 
         Image image = new Image();
-        //Image image = imageRepository.findById(advert.getId()).get();
         image.setAdvert(advert);
         image.setImage(imageContent);
 

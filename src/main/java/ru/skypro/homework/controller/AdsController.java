@@ -19,10 +19,8 @@ import ru.skypro.homework.entities.Comment;
 import ru.skypro.homework.entities.Image;
 import ru.skypro.homework.entities.Users;
 import ru.skypro.homework.exception.AdsNotFoundException;
-import ru.skypro.homework.repository.CommentRepository;
-import ru.skypro.homework.repository.ImageRepository;
+import ru.skypro.homework.exception.ForbiddenAccessException;
 import ru.skypro.homework.service.AdsService;
-import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
@@ -117,10 +115,6 @@ public class AdsController {
     }
 
     @GetMapping(value = "/image/{id}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    /*public byte[] getImage(@PathVariable Long id) {
-        logger.info("Показ картинки: {}");
-        Image image = imageService.getImageByAdvertId(id);
-        return image.getImage();*/
     public byte[] getImage(@PathVariable Long id) {
         logger.info("Показ картинки: {}");
         Image image = imageService.getImageById(id);
@@ -144,9 +138,9 @@ public class AdsController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Создание комментариев по ad_pk", responses = {@ApiResponse(responseCode = "200", description = "ОК"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PostMapping("/{ad_pk}/comments")
-    public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @RequestBody AdsCommentDto adsCommentDto) {
-
-        return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto)));
+    public AdsCommentDto addAdsComments(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @RequestBody AdsCommentDto adsCommentDto, Authentication auth) {
+        String userName = auth.getName();
+        return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto), userName));
     }
 
     /**
@@ -164,7 +158,7 @@ public class AdsController {
         if (idComment.contains(Long.valueOf(id)) || userRole.equals("ADMIN")) {
             adsService.deleteAdsComment(id);
         } else {
-            throw new AdsNotFoundException("Ошибка 403: Вы не можете удалить данный комментарий!");
+            throw new ForbiddenAccessException("Ошибка 403: Вы не можете удалить данный комментарий!");
         }
     }
 
@@ -193,7 +187,7 @@ public class AdsController {
         if (idComment.contains(Long.valueOf(id)) || userRole.equals("ADMIN")) {
             return adsService.updateAdsComment(ad_pk, id, comment);
         } else {
-            throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данный комментарий!");
+            throw new ForbiddenAccessException("Ошибка 403: Вы не можете редактировать данный комментарий!");
         }
     }
 
@@ -290,7 +284,7 @@ public class AdsController {
         //Если выбранное объявление создано пользователем, то можно редактировать
         if (idAdvert1.contains(id) || userRole.equals("ADMIN")) {
             Advert advert = adsService.getAds(id);
-            imageService.createImage(advert, image);
+            imageService.uploadImage(advert, image);
             return ResponseEntity.ok().build();
         } else {
             throw new AdsNotFoundException("Ошибка 403: Вы не можете редактировать данное объявление!");
