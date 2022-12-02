@@ -91,7 +91,7 @@ public class UserService {
             return ResponseEntity.notFound().build();
         }
             Users user = optionalUser.get();
-            user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+            user.setPassword(ENCRYPTION_PREFIX+passwordEncoder.encode(passwordDto.getNewPassword()));
             userRepository.save(user);
             log.info("Пароль текущего пользователя обновлен");
             return ResponseEntity.ok(passwordDto);
