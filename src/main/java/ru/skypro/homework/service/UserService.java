@@ -92,9 +92,13 @@ public class UserService {
             logger.info(passwordDto.getCurrentPassword());
             logger.info(optionalUser.get().getPassword());
         String encryptedPassword = optionalUser.get().getPassword();
-        String encryptedPasswordWithoutPrefix = encryptedPassword.substring(PREFIX.length());
-        if (passwordDto.getNewPassword().isEmpty() || !passwordEncoder.matches(passwordDto.getCurrentPassword(), encryptedPasswordWithoutPrefix)) {
-            logger.info("Текущий пароль указан неверно");
+        String prefix = encryptedPassword.substring(0, PREFIX.length());
+        String ecryptedPasswordWithoutEncryptionType = encryptedPassword;
+        if (prefix.equals(PREFIX)) {
+            ecryptedPasswordWithoutEncryptionType = encryptedPassword.substring(PREFIX.length());
+        }
+        if (passwordDto.getNewPassword().isEmpty() || !passwordEncoder.matches(passwordDto.getCurrentPassword(), ecryptedPasswordWithoutEncryptionType)) {
+            log.info("Текущий пароль указан неверно");
             return ResponseEntity.notFound().build();
         }
             Users user = optionalUser.get();
