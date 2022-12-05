@@ -48,3 +48,4 @@ CREATE TABLE IF NOT EXISTS authorities (
     REFERENCES users (username)
     );
 create unique index IF NOT EXISTS ix_auth_username on authorities (username,authority);
+

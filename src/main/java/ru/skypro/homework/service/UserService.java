@@ -31,7 +31,7 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    private static final String ENCRYPTION_PREFIX = "{bcrypt}";
+    private static final String PREFIX = "{bcrypt}";
 
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
@@ -92,17 +92,17 @@ public class UserService {
             logger.info(passwordDto.getCurrentPassword());
             logger.info(optionalUser.get().getPassword());
         String encryptedPassword = optionalUser.get().getPassword();
-        String prefix = encryptedPassword.substring(0, ENCRYPTION_PREFIX.length());
+        String prefix = encryptedPassword.substring(0, PREFIX.length());
         String ecryptedPasswordWithoutEncryptionType = encryptedPassword;
-        if (prefix.equals(ENCRYPTION_PREFIX)) {
-            ecryptedPasswordWithoutEncryptionType = encryptedPassword.substring(ENCRYPTION_PREFIX.length());
+        if (prefix.equals(PREFIX)) {
+            ecryptedPasswordWithoutEncryptionType = encryptedPassword.substring(PREFIX.length());
         }
         if (passwordDto.getNewPassword().isEmpty() || !passwordEncoder.matches(passwordDto.getCurrentPassword(), ecryptedPasswordWithoutEncryptionType)) {
-            logger.info("Текущий пароль указан неверно");
+            log.info("Текущий пароль указан неверно");
             return ResponseEntity.notFound().build();
         }
             Users user = optionalUser.get();
-            user.setPassword(ENCRYPTION_PREFIX+passwordEncoder.encode(passwordDto.getNewPassword()));
+            user.setPassword(PREFIX+passwordEncoder.encode(passwordDto.getNewPassword()));
             userRepository.save(user);
             log.info("Пароль текущего пользователя обновлен");
             return ResponseEntity.ok(passwordDto);

@@ -15,7 +15,6 @@ public interface AdsMapper {
     @Mapping(source = "author", target = "users.id")
     Advert adsDTOtoAdvert(AdsDto adsDto);
 
-    Advert createAdsDtoToAds(CreateAdsDto createAdsDto);
 
 
 }

@@ -3,6 +3,7 @@ package ru.skypro.homework.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "comment")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +35,6 @@ public class Comment {
     @JsonIgnore
     private Advert advert;
 
-    public Comment() {
-    }
 
     @Override
     public String toString() {

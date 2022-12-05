@@ -11,12 +11,7 @@ public class RegisterReqDto {
     private String phone;
     private Role role;
 
-    public RegisterReqDto(String password, String firstName, String lastName, String phone, Role role) {
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.role = role;
+    public RegisterReqDto() {
     }
 
     public String getPhone() {
