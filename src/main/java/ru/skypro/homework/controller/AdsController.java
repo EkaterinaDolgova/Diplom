@@ -143,9 +143,7 @@ public class AdsController {
         return adsCommentMapper.toCommentDTO(adsService.addComment(ad_pk, adsCommentMapper.toAsdComment(adsCommentDto), userName));
     }
 
-    /**
-     * Удаление комментария по id .
-     */
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Удаление комментария по id .", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенный"), @ApiResponse(responseCode = "404", description = "Не найдено")})
     @DeleteMapping("/{ad_pk}/comments/{id}")
@@ -176,7 +174,11 @@ public class AdsController {
      * Изменение комментария по id .
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    @Operation(summary = "Изменение комментария по id .", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"), @ApiResponse(responseCode = "201", description = "Созданный"), @ApiResponse(responseCode = "401", description = "Неавторизованный"), @ApiResponse(responseCode = "403", description = "Запрещенно"), @ApiResponse(responseCode = "404", description = "Не найдено")})
+    @Operation(summary = "Изменение комментария по id .", responses = {@ApiResponse(responseCode = "200", description = "Удаление комментария успешно"),
+            @ApiResponse(responseCode = "201", description = "Созданный"),
+            @ApiResponse(responseCode = "401", description = "Неавторизованный"),
+            @ApiResponse(responseCode = "403", description = "Запрещенно"),
+            @ApiResponse(responseCode = "404", description = "Не найдено")})
     @PatchMapping("/{ad_pk}/comments/{id}")
     public Comment updateAdsComment(@Parameter(description = "") @PathVariable Integer ad_pk, @Parameter(description = "") @PathVariable Integer id, @RequestBody Comment comment, Authentication authentication) {
         Users users = userService.findIdUser(authentication.getName());
